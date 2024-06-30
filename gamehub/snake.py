@@ -67,7 +67,7 @@ def verify_collision(body, ROWS, COLS):
     return False
 
 
-def main(stdscr):
+def gameloop(stdscr):
 
     curses.curs_set(0)  # Hide cursor
 
@@ -117,4 +117,5 @@ def main(stdscr):
         time.sleep(0.05)
     stdscr.refresh()
 
-wrapper(main)  # Call the function via wrapper
+def init_game():
+    wrapper(gameloop)  # Call the function via wrapper
