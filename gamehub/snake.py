@@ -46,6 +46,11 @@ class Snake:
     def draw_food(self, stdscr, y, x, color) -> None:
         stdscr.addstr(y, x, "  ", color)
 
+    def draw_game_over(self, stdscr, ROWS, COLS) -> None:
+        stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
+        stdscr.refresh()
+        time.sleep(1)
+
     def new_food_coordinates(self, ROWS, COLS, body) -> tuple:
         y= random.randint(0, ROWS)
         x= random.randint(0, COLS)
@@ -75,32 +80,31 @@ class Snake:
     def gameloop(self, stdscr) -> None:
 
         curses.curs_set(0)  # Hide cursor
+        stdscr.nodelay(True) # Non-blocking input
 
+        # Define colors
         curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_GREEN)
         COLOR_GREEN_GREEN = curses.color_pair(1)
-
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_RED)
         COLOR_RED_RED = curses.color_pair(2)
 
 
         (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
-        stdscr.nodelay(True)
 
         score = 0
-
+        # Initial snake
         body = deque([(0,0)])
-        y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
         direction = "RIGHT"
         last_key = "KEY_RIGHT"
+
+        y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
         while last_key != 'q':
             stdscr.clear()
 
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
             body.append((y, x))
             if self.verify_collision(body, ROWS, COLS):
-                stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
-                stdscr.refresh()
-                time.sleep(1)
+                self.draw_game_over(stdscr, ROWS, COLS)
                 break
             if self.check_food_eaten(body, y_food, x_food):
                 body.append((y, x))
@@ -113,6 +117,7 @@ class Snake:
 
             self.draw_snake(stdscr, body, COLOR_GREEN_GREEN)
             self.draw_food(stdscr, y_food, x_food, COLOR_RED_RED)
+            stdscr.refresh()
             
             try:
                 last_key = stdscr.getkey()
