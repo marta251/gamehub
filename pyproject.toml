@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gamehub"
+version = "0.0.1"
+dependencies = []
+requires-python = ">=3.8"
+authors = [
+  {name = "Marta Malagutti", email = "marta01.malagutti@edu.unife.it"},
+  {name = "Riccardo Morelli", email = "riccardo.morelli@edu.unife.it"}
+]
+maintainers = [
+  {name = "Marta Malagutti", email = "marta01.malagutti@edu.unife.it"},
+  {name = "Riccardo Morelli", email = "riccardo.morelli@edu.unife.it"}
+]
+description = "A collection of games you can play from your terminal."
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["games"]
+
+[project.scripts]
+gamehub = "gamehub:main"

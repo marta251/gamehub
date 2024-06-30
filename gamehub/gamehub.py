@@ -1,5 +1,5 @@
 import argparse
-import snake
+from . import snake
 
 def main():
     parser = argparse.ArgumentParser(prog="gamehub", description="GameHub is a game launcher for the terminal.")
