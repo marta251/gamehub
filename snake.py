@@ -5,7 +5,7 @@ from collections import deque
 import random
 
 
-#TODO: Add losing conditions, score, and restart
+#TODO: Add score and restart
 
 def calcule_new_position(y, x, direction, ROWS, COLS):
     if direction == "UP":
@@ -41,10 +41,12 @@ def draw_snake(stdscr, body, color):
 def draw_food(stdscr, y, x, color):
     stdscr.addstr(y, x, "  ", color)
 
-#TODO: Food shouldn't spawn on the snake
-def new_food_coordinates(ROWS, COLS):
+def new_food_coordinates(ROWS, COLS, body):
     y= random.randint(0, ROWS)
     x= random.randint(0, COLS)
+    while (y,x) in body:
+        y= random.randint(0, ROWS)
+        x= random.randint(0, COLS)
     if x%2!=0:
         x-=1
     return y, x
@@ -71,17 +73,18 @@ def main(stdscr):
 
     curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_GREEN)
     COLOR_GREEN_GREEN = curses.color_pair(1)
+
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_RED)
     COLOR_RED_RED = curses.color_pair(2)
+
 
     (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
     stdscr.nodelay(True)
 
     score = 0
 
-    
     body = deque([(0,0)])
-    y_food, x_food = new_food_coordinates(ROWS, COLS)
+    y_food, x_food = new_food_coordinates(ROWS, COLS, body)
     direction = "RIGHT"
     last_key = "KEY_RIGHT"
     while last_key != 'q':
@@ -92,11 +95,11 @@ def main(stdscr):
         if verify_collision(body, ROWS, COLS):
             stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
             stdscr.refresh()
-            time.sleep(2)
+            time.sleep(1)
             break
         if check_food_eaten(body, y_food, x_food):
             body.append((y, x))
-            y_food, x_food = new_food_coordinates(ROWS, COLS)
+            y_food, x_food = new_food_coordinates(ROWS, COLS, body)
             score += 1
         else:
             body.popleft()
@@ -113,6 +116,5 @@ def main(stdscr):
 
         time.sleep(0.05)
     stdscr.refresh()
-
 
 wrapper(main)  # Call the function via wrapper
