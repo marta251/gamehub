@@ -7,7 +7,7 @@ def main():
 
     args = parser.parse_args()
     if args.game == "snake":
-        snake.init_game()
+        snake.Snake().init_game()
         
         
 if __name__ == "__main__":

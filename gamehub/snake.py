@@ -7,115 +7,120 @@ import random
 
 #TODO: Add score and restart
 
-def calcule_new_position(y, x, direction, ROWS, COLS):
-    if direction == "UP":
-        if y > 0:
-            y -= 1
-    elif direction == "DOWN":
-        if y < ROWS:
-            y += 1
-    elif direction == "LEFT":
-        if x > 1:
-            x -= 2
-    elif direction == "RIGHT":
-        if x < COLS:
-            x += 2
-    return y, x
+class Snake:
 
-def calcule_direction(currentDirection, key):
-    if key == "KEY_UP" and currentDirection != "DOWN":
-        return "UP"
-    elif key == "KEY_DOWN" and currentDirection != "UP":
-        return "DOWN"
-    elif key == "KEY_LEFT" and currentDirection != "RIGHT":
-        return "LEFT"
-    elif key == "KEY_RIGHT" and currentDirection != "LEFT":
-        return "RIGHT"
-    return currentDirection
+    def __init__(self) -> None:
+        pass
 
-def draw_snake(stdscr, body, color):
-    for i in range(len(body)):
-        (y, x) = body[i]
+    def calcule_new_position(self, y, x, direction, ROWS, COLS) -> tuple:
+        if direction == "UP":
+            if y > 0:
+                y -= 1
+        elif direction == "DOWN":
+            if y < ROWS:
+                y += 1
+        elif direction == "LEFT":
+            if x > 1:
+                x -= 2
+        elif direction == "RIGHT":
+            if x < COLS:
+                x += 2
+        return y, x
+
+    def calcule_direction(self, currentDirection, key) -> str:
+        if key == "KEY_UP" and currentDirection != "DOWN":
+            return "UP"
+        elif key == "KEY_DOWN" and currentDirection != "UP":
+            return "DOWN"
+        elif key == "KEY_LEFT" and currentDirection != "RIGHT":
+            return "LEFT"
+        elif key == "KEY_RIGHT" and currentDirection != "LEFT":
+            return "RIGHT"
+        return currentDirection
+
+    def draw_snake(self, stdscr, body, color) -> None:
+        for i in range(len(body)):
+            (y, x) = body[i]
+            stdscr.addstr(y, x, "  ", color)
+
+    def draw_food(self, stdscr, y, x, color) -> None:
         stdscr.addstr(y, x, "  ", color)
 
-def draw_food(stdscr, y, x, color):
-    stdscr.addstr(y, x, "  ", color)
-
-def new_food_coordinates(ROWS, COLS, body):
-    y= random.randint(0, ROWS)
-    x= random.randint(0, COLS)
-    while (y,x) in body:
+    def new_food_coordinates(self, ROWS, COLS, body) -> tuple:
         y= random.randint(0, ROWS)
         x= random.randint(0, COLS)
-    if x%2!=0:
-        x-=1
-    return y, x
-    
-def check_food_eaten(body, y_food, x_food):
-    if body[len(body) - 1] == (y_food, x_food):
-        return True
-    return False
-
-def verify_collision(body, ROWS, COLS):
-    if body[len(body) - 1][0] < 0 or body[len(body) - 1][0] > ROWS:
-        return True
-    if body[len(body) - 1][1] < 0 or body[len(body) - 1][1] > COLS:
-        return True
-    for i in range(len(body) - 1):
-        if body[len(body) - 1] == body[i]:
-            return True
-    return False
-
-
-def gameloop(stdscr):
-
-    curses.curs_set(0)  # Hide cursor
-
-    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_GREEN)
-    COLOR_GREEN_GREEN = curses.color_pair(1)
-
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_RED)
-    COLOR_RED_RED = curses.color_pair(2)
-
-
-    (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
-    stdscr.nodelay(True)
-
-    score = 0
-
-    body = deque([(0,0)])
-    y_food, x_food = new_food_coordinates(ROWS, COLS, body)
-    direction = "RIGHT"
-    last_key = "KEY_RIGHT"
-    while last_key != 'q':
-        stdscr.clear()
-
-        (y, x) = calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
-        body.append((y, x))
-        if verify_collision(body, ROWS, COLS):
-            stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
-            stdscr.refresh()
-            time.sleep(1)
-            break
-        if check_food_eaten(body, y_food, x_food):
-            body.append((y, x))
-            y_food, x_food = new_food_coordinates(ROWS, COLS, body)
-            score += 1
-        else:
-            body.popleft()
-
-        direction = calcule_direction(direction, last_key)
-
-        draw_snake(stdscr, body, COLOR_GREEN_GREEN)
-        draw_food(stdscr, y_food, x_food, COLOR_RED_RED)
+        while (y,x) in body:
+            y= random.randint(0, ROWS)
+            x= random.randint(0, COLS)
+        if x%2!=0:
+            x-=1
+        return y, x
         
-        try:
-            last_key = stdscr.getkey()
-        except:
-            last_key = None
+    def check_food_eaten(self, body, y_food, x_food) -> bool:
+        if body[len(body) - 1] == (y_food, x_food):
+            return True
+        return False
 
-        time.sleep(0.05)
-    stdscr.refresh()
+    def verify_collision(self, body, ROWS, COLS) -> bool:
+        if body[len(body) - 1][0] < 0 or body[len(body) - 1][0] > ROWS:
+            return True
+        if body[len(body) - 1][1] < 0 or body[len(body) - 1][1] > COLS:
+            return True
+        for i in range(len(body) - 1):
+            if body[len(body) - 1] == body[i]:
+                return True
+        return False
 
-def init_game():
-    wrapper(gameloop)  # Call the function via wrapper
+
+    def gameloop(self, stdscr) -> None:
+
+        curses.curs_set(0)  # Hide cursor
+
+        curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_GREEN)
+        COLOR_GREEN_GREEN = curses.color_pair(1)
+
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_RED)
+        COLOR_RED_RED = curses.color_pair(2)
+
+
+        (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
+        stdscr.nodelay(True)
+
+        score = 0
+
+        body = deque([(0,0)])
+        y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
+        direction = "RIGHT"
+        last_key = "KEY_RIGHT"
+        while last_key != 'q':
+            stdscr.clear()
+
+            (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
+            body.append((y, x))
+            if self.verify_collision(body, ROWS, COLS):
+                stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
+                stdscr.refresh()
+                time.sleep(1)
+                break
+            if self.check_food_eaten(body, y_food, x_food):
+                body.append((y, x))
+                y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
+                score += 1
+            else:
+                body.popleft()
+
+            direction = self.calcule_direction(direction, last_key)
+
+            self.draw_snake(stdscr, body, COLOR_GREEN_GREEN)
+            self.draw_food(stdscr, y_food, x_food, COLOR_RED_RED)
+            
+            try:
+                last_key = stdscr.getkey()
+            except:
+                last_key = None
+
+            time.sleep(0.05)
+        stdscr.refresh()
+
+    def init_game(self) -> None:
+        wrapper(self.gameloop)  # Call the function via wrapper
