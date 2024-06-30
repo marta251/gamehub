@@ -54,6 +54,16 @@ def check_food_eaten(body, y_food, x_food):
         return True
     return False
 
+def verify_collision(body, ROWS, COLS):
+    if body[len(body) - 1][0] < 0 or body[len(body) - 1][0] > ROWS:
+        return True
+    if body[len(body) - 1][1] < 0 or body[len(body) - 1][1] > COLS:
+        return True
+    for i in range(len(body) - 1):
+        if body[len(body) - 1] == body[i]:
+            return True
+    return False
+
 
 def main(stdscr):
 
@@ -79,6 +89,11 @@ def main(stdscr):
 
         (y, x) = calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
         body.append((y, x))
+        if verify_collision(body, ROWS, COLS):
+            stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
+            stdscr.refresh()
+            time.sleep(2)
+            break
         if check_food_eaten(body, y_food, x_food):
             body.append((y, x))
             y_food, x_food = new_food_coordinates(ROWS, COLS)
