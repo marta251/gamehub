@@ -24,7 +24,7 @@ class TestSnake:
             strategies.integers(min_value=0),
             strategies.integers(min_value=0)))
     
-    @settings(max_exmples=20)
+    @settings(max_examples=20)
     def test_property_calcule_new_position_always_inside(self,t):
         strategies(t[0] < t[3])
         strategies(t[1] < t[4])
