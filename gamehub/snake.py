@@ -4,7 +4,7 @@ import time
 from collections import deque
 import random
 
-#TODO: Add score and restart
+#TODO: Add score, restart and difficulty
 
 class Snake:
 
@@ -26,28 +26,28 @@ class Snake:
                 x += 2
         return y, x
 
-    def calcule_direction(self, currentDirection, key) -> str:
-        if key == "KEY_UP" and currentDirection != "DOWN":
+    def calcule_direction(self, current_direction, key) -> str:
+        if key == "KEY_UP" and current_direction != "DOWN":
             return "UP"
-        elif key == "KEY_DOWN" and currentDirection != "UP":
+        elif key == "KEY_DOWN" and current_direction != "UP":
             return "DOWN"
-        elif key == "KEY_LEFT" and currentDirection != "RIGHT":
+        elif key == "KEY_LEFT" and current_direction != "RIGHT":
             return "LEFT"
-        elif key == "KEY_RIGHT" and currentDirection != "LEFT":
+        elif key == "KEY_RIGHT" and current_direction != "LEFT":
             return "RIGHT"
-        return currentDirection
+        return current_direction
 
-    def draw_snake(self, stdscr, body, color) -> None:
+    def draw_snake(self, window, body, color) -> None:
         for i in range(len(body)):
             (y, x) = body[i]
-            stdscr.addstr(y, x, "  ", color)
+            window.addstr(y, x, "  ", color)
 
-    def draw_food(self, stdscr, y, x, color) -> None:
-        stdscr.addstr(y, x, "  ", color)
+    def draw_food(self, window, y, x, color) -> None:
+        window.addstr(y, x, "  ", color)
 
-    def draw_game_over(self, stdscr, ROWS, COLS) -> None:
-        stdscr.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
-        stdscr.refresh()
+    def draw_game_over(self, window, ROWS, COLS) -> None:
+        window.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
+        window.refresh()
         time.sleep(1)
 
     def new_food_coordinates(self, ROWS, COLS, body) -> tuple:
