@@ -4,7 +4,6 @@ import time
 from collections import deque
 import random
 
-
 #TODO: Add score and restart
 
 class Snake:

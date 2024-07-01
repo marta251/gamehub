@@ -1,9 +1,7 @@
 import pytest # type: ignore
 import gamehub.snake as snake
-from hypothesis import given, strategies, assume, settings
+from hypothesis import given, strategies, settings
 from hypothesis.strategies import composite, integers
-import random
-
 
 
 class TestSnake:
@@ -16,7 +14,6 @@ class TestSnake:
     def test_calcule_direction(self, key, current_direction, expected):
         snake_t = snake.Snake()
         assert snake_t.calcule_direction(current_direction, key) == expected
-
 
     @pytest.mark.parametrize("y, x, direction, ROWS, COLS, expected",
                              [(0, 0, "UP", 10, 10, (0, 0)),
@@ -47,7 +44,6 @@ class TestSnake:
         res_y, res_x = s.calcule_new_position(t[0][0],t[1][0],t[2],t[0][1],t[1][1])
         assert res_y <= t[0][1] and res_x <= t[1][1]
         
-
     @pytest.mark.parametrize("ROWS, COLS, body",
                              [   (5, 5, [(0, 0), (0, 2), (0, 4)]),
                                  (5, 5, [(0, 0), (0, 2), (0, 4)]),
@@ -58,7 +54,6 @@ class TestSnake:
         (y, x) = s.new_food_coordinates(ROWS, COLS, body)
         assert (y, x) not in body
 
-
     @given(strategies.tuples(
         strategies.integers(min_value=0),
         strategies.integers(min_value=0)))
@@ -68,7 +63,6 @@ class TestSnake:
         (y, x) = s.new_food_coordinates(t[0], t[1], [])
         assert y <= t[0] and x <= t[1] and x % 2 == 0
 
-
     @pytest.mark.parametrize("body, y_food, x_food, expected",
                              [  ([(0, 0), (0, 2), (0, 4)], 0, 6, False),
                                 ([(0, 0), (0, 2), (0, 4)], 0, 4, True),
@@ -77,7 +71,6 @@ class TestSnake:
     def test_check_food_eaten(self, body, y_food, x_food, expected):
         s = snake.Snake()
         assert s.check_food_eaten(body, y_food, x_food) == expected
-
     
     @pytest.mark.parametrize("body, expected",
                              [  ([(0, 0), (0, 2), (0, 4)], False),
@@ -109,7 +102,3 @@ class TestSnake:
             
         return a, b
         '''
-
-    
-
-
