@@ -6,7 +6,8 @@ class TestSnake:
                              [("KEY_UP", "DOWN", "DOWN"),
                                 ("KEY_DOWN", "RIGHT", "DOWN"),
                                 ("KEY_LEFT", "UP", "LEFT"),
-                                ("KEY_DOWN", "DOWN", "DOWN")])
+                                ("KEY_DOWN", "DOWN", "DOWN"),
+                                ("KEY_RIGHT", "LEFT", "LEFT")])
     def test_calcule_direction(self, key, current_direction, expected):
         snake_t = snake.Snake()
         assert snake_t.calcule_direction(current_direction, key) == expected
