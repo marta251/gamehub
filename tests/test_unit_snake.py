@@ -28,6 +28,6 @@ class TestSnake:
     def test_property_calcule_new_position_always_inside(self,t):
         assume(t[0] < t[3])
         assume(t[1] < t[4])
-        s = snake.Snake(self)
+        s = snake.Snake()
         res_y, res_x = s.calcule_new_position(t[0],t[1],t[2],t[3],t[4])
         assert res_y < t[3] and res_x < t[4]
