@@ -92,6 +92,7 @@ class Snake:
         (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
 
         main_window = curses.newwin(curses.LINES, curses.COLS, 0, 0)
+        score_window = curses.newwin(1, 12, 0, curses.COLS - 12)
 
         score = 0
         # Initial snake
@@ -120,6 +121,9 @@ class Snake:
             self.draw_snake(main_window, body, COLOR_GREEN_GREEN)
             self.draw_food(main_window, y_food, x_food, COLOR_RED_RED)
             main_window.refresh()
+
+            score_window.addstr(0, 0, "SCORE: " + str(score))
+            score_window.refresh()
             
             try:
                 last_key = stdscr.getkey()
