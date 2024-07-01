@@ -54,11 +54,13 @@ class Snake:
     def new_food_coordinates(self, ROWS, COLS, body) -> tuple:
         y= random.randint(0, ROWS)
         x= random.randint(0, COLS)
+        if x%2!=0:
+            x-=1
         while (y,x) in body:
             y= random.randint(0, ROWS)
             x= random.randint(0, COLS)
-        if x%2!=0:
-            x-=1
+            if x%2!=0:
+                x-=1
         return y, x
         
     def check_food_eaten(self, body, y_food, x_food) -> bool:
@@ -66,11 +68,8 @@ class Snake:
             return True
         return False
 
-    def verify_collision(self, body, ROWS, COLS) -> bool:
-        if body[len(body) - 1][0] < 0 or body[len(body) - 1][0] > ROWS:
-            return True
-        if body[len(body) - 1][1] < 0 or body[len(body) - 1][1] > COLS:
-            return True
+    def verify_collision(self, body) -> bool:
+
         for i in range(len(body) - 1):
             if body[len(body) - 1] == body[i]:
                 return True
@@ -103,7 +102,7 @@ class Snake:
 
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
             body.append((y, x))
-            if self.verify_collision(body, ROWS, COLS):
+            if self.verify_collision(body):
                 self.draw_game_over(stdscr, ROWS, COLS)
                 break
             if self.check_food_eaten(body, y_food, x_food):
