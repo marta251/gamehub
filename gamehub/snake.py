@@ -91,6 +91,8 @@ class Snake:
 
         (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
 
+        main_window = curses.newwin(curses.LINES, curses.COLS, 0, 0)
+
         score = 0
         # Initial snake
         body = deque([(0,0)])
@@ -99,12 +101,12 @@ class Snake:
 
         y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
         while last_key != 'q':
-            stdscr.clear()
+            main_window.clear()
 
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
             body.append((y, x))
             if self.verify_collision(body):
-                self.draw_game_over(stdscr, ROWS, COLS, score)
+                self.draw_game_over(main_window, ROWS, COLS, score)
                 break
             if self.check_food_eaten(body, y_food, x_food):
                 body.append((y, x))
@@ -115,9 +117,9 @@ class Snake:
 
             direction = self.calcule_direction(direction, last_key)
 
-            self.draw_snake(stdscr, body, COLOR_GREEN_GREEN)
-            self.draw_food(stdscr, y_food, x_food, COLOR_RED_RED)
-            stdscr.refresh()
+            self.draw_snake(main_window, body, COLOR_GREEN_GREEN)
+            self.draw_food(main_window, y_food, x_food, COLOR_RED_RED)
+            main_window.refresh()
             
             try:
                 last_key = stdscr.getkey()
@@ -125,7 +127,6 @@ class Snake:
                 last_key = None
 
             time.sleep(0.05)
-        stdscr.refresh()
 
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
