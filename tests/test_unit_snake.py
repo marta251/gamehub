@@ -1,4 +1,4 @@
-import pytest
+import pytest # type: ignore
 import gamehub.snake as snake
 
 class TestSnake:
