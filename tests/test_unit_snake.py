@@ -1,6 +1,6 @@
 import pytest # type: ignore
 import gamehub.snake as snake
-from hypothesis import given, strategies, settings
+from hypothesis import given, strategies, assume, settings
 
 class TestSnake:
     @pytest.mark.parametrize("key, current_direction, expected",
@@ -26,8 +26,8 @@ class TestSnake:
     
     @settings(max_examples=20)
     def test_property_calcule_new_position_always_inside(self,t):
-        strategies(t[0] < t[3])
-        strategies(t[1] < t[4])
+        assume(t[0] < t[3])
+        assume(t[1] < t[4])
         s = snake.Snake(self)
         res_y, res_x = s.calcule_new_position(t[0],t[1],t[2],t[3],t[4])
         assert res_y < t[3] and res_x < t[4]
