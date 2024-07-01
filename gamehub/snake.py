@@ -45,8 +45,10 @@ class Snake:
     def draw_food(self, window, y, x, color) -> None:
         window.addstr(y, x, "  ", color)
 
-    def draw_game_over(self, window, ROWS, COLS) -> None:
-        window.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BLINK)
+    def draw_game_over(self, window, ROWS, COLS, score) -> None:
+        window.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BOLD)
+        window.addstr(ROWS//2 + 1, COLS//2, "SCORE: " + str(score), curses.A_BLINK)
+        window.addstr(ROWS//2 + 2, COLS//2, "Press enter to play again...", curses.A_BLINK)
         window.refresh()
         time.sleep(1)
 
@@ -102,7 +104,7 @@ class Snake:
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
             body.append((y, x))
             if self.verify_collision(body):
-                self.draw_game_over(stdscr, ROWS, COLS)
+                self.draw_game_over(stdscr, ROWS, COLS, score)
                 break
             if self.check_food_eaten(body, y_food, x_food):
                 body.append((y, x))
