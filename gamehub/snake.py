@@ -3,8 +3,6 @@ from curses import wrapper
 import time
 from collections import deque
 import random
-from curses.textpad import rectangle
-
 
 #TODO: Add restart and difficulty
 
@@ -13,7 +11,7 @@ class Snake:
     def __init__(self) -> None:
         pass
 
-    def calcule_new_position(self, y, x, direction, SNAKE_BOUNDS) -> tuple:
+    def calcule_new_position(self, y : int, x : int, direction : str, SNAKE_BOUNDS : tuple[int, int, int, int]) -> tuple[int, int]:
         if direction == "UP":
             if y > SNAKE_BOUNDS[0]:
                 y -= 1
@@ -28,7 +26,7 @@ class Snake:
                 x += 2
         return y, x
 
-    def calcule_direction(self, current_direction, key) -> str:
+    def calcule_direction(self, current_direction : str, key : str) -> str:
         if key == "KEY_UP" and current_direction != "DOWN":
             return "UP"
         elif key == "KEY_DOWN" and current_direction != "UP":
@@ -39,28 +37,28 @@ class Snake:
             return "RIGHT"
         return current_direction
 
-    def draw_snake(self, window, body, color) -> None:
+    def draw_snake(self, window, body : deque[tuple[int, int]], color : int) -> None:
         for i in range(len(body)):
             (y, x) = body[i]
             window.addstr(y, x, "  ", color)
 
-    def draw_food(self, window, y, x, color) -> None:
+    def draw_food(self, window, y : int, x : int, color : int) -> None:
         window.addstr(y, x, "  ", color)
 
-    def draw_thick_border(self, window, ROWS, COLS, color) -> None:
+    def draw_thick_border(self, window, ROWS : int, COLS : int, color : int) -> None:
         for i in range(ROWS - 1):
             window.addstr(i, 1, " ", color)
             window.addstr(i, COLS - 2, " ", color)
         
 
-    def draw_game_over(self, window, ROWS, COLS, score) -> None:
+    def draw_game_over(self, window, ROWS : int, COLS : int, score : int) -> None:
         window.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BOLD)
         window.addstr(ROWS//2 + 1, COLS//2, "SCORE: " + str(score), curses.A_BLINK)
         window.addstr(ROWS//2 + 2, COLS//2, "Press enter to play again...", curses.A_BLINK)
         window.refresh()
         time.sleep(1)
 
-    def new_food_coordinates(self, body, SNAKE_BOUNDS) -> tuple:
+    def new_food_coordinates(self, body : deque[tuple[int, int]], SNAKE_BOUNDS : int) -> tuple:
         y= random.randint(SNAKE_BOUNDS[0], SNAKE_BOUNDS[1])
         x= random.randint(SNAKE_BOUNDS[2], SNAKE_BOUNDS[3])
         if x%2!=0:
@@ -72,12 +70,12 @@ class Snake:
                 x-=1
         return y, x
         
-    def check_food_eaten(self, body, y_food, x_food) -> bool:
+    def check_food_eaten(self, body : deque[tuple[int, int]], y_food : int, x_food : int) -> bool:
         if body[len(body) - 1] == (y_food, x_food):
             return True
         return False
 
-    def verify_collision(self, body) -> bool:
+    def verify_collision(self, body : deque[tuple[int, int]]) -> bool:
 
         for i in range(len(body) - 1):
             if body[len(body) - 1] == body[i]:
