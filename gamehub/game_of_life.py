@@ -43,21 +43,32 @@ class GameOfLife:
                             new_matrix[i][j] = 1    
             return new_matrix
 
-    #def draw_board(stdscr, rows, cols) -> None:
-    '''
-    def main(stdscr) -> None:
+    def draw_board(self, stdscr, matrix, color) -> None:
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
+                if matrix[i][j] == 1:
+                    stdscr.addstr(i, j * 2, "  ", color)
+                
+
+    def gameloop(self, stdscr) -> None:
         curses.curs_set(0)  # Hide cursor
+        #stdscr.nodelay(True) # Non-blocking input
 
-        (ROWS, COLS) = (curses.LINES - 1, curses.COLS - 1)
+        # Define colors
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_WHITE)
+        COLOR_WHITE_WHITE = curses.color_pair(1)
 
-        while True:
+        matrix = self.initialize_matrix(curses.LINES, curses.COLS//2, 20)
+        last_key = None
+        while last_key != 'q':
             stdscr.clear()
-            draw_board(stdscr, ROWS, COLS)
+            self.draw_board(stdscr, matrix, COLOR_WHITE_WHITE)
             stdscr.refresh()
-            
-            if stdscr.getkey() == 'q': # Exit the game when 'q' is pressed
-                break
-            else:
-                update_board(stdscr, ROWS, COLS)
-    '''
+            matrix = self.update_matrix(matrix)
+            last_key = stdscr.getkey()
 
+        
+
+
+    def init_game(self) -> None:
+        wrapper(self.gameloop)  # Call the function via wrapper
