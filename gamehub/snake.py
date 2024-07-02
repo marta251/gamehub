@@ -3,26 +3,28 @@ from curses import wrapper
 import time
 from collections import deque
 import random
+from curses.textpad import rectangle
 
-#TODO: Add score, restart and difficulty
+
+#TODO: Add restart and difficulty
 
 class Snake:
 
     def __init__(self) -> None:
         pass
 
-    def calcule_new_position(self, y, x, direction, ROWS, COLS) -> tuple:
+    def calcule_new_position(self, y, x, direction, SNAKE_BOUNDS) -> tuple:
         if direction == "UP":
-            if y > 0:
+            if y > SNAKE_BOUNDS[0]:
                 y -= 1
         elif direction == "DOWN":
-            if y < ROWS:
+            if y < SNAKE_BOUNDS[1]:
                 y += 1
         elif direction == "LEFT":
-            if x > 1:
+            if x > SNAKE_BOUNDS[2]:
                 x -= 2
         elif direction == "RIGHT":
-            if x < COLS:
+            if x < SNAKE_BOUNDS[3]:
                 x += 2
         return y, x
 
@@ -45,6 +47,12 @@ class Snake:
     def draw_food(self, window, y, x, color) -> None:
         window.addstr(y, x, "  ", color)
 
+    def draw_thick_border(self, window, ROWS, COLS, color) -> None:
+        for i in range(ROWS - 1):
+            window.addstr(i, 1, " ", color)
+            window.addstr(i, COLS - 2, " ", color)
+        
+
     def draw_game_over(self, window, ROWS, COLS, score) -> None:
         window.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BOLD)
         window.addstr(ROWS//2 + 1, COLS//2, "SCORE: " + str(score), curses.A_BLINK)
@@ -52,14 +60,14 @@ class Snake:
         window.refresh()
         time.sleep(1)
 
-    def new_food_coordinates(self, ROWS, COLS, body) -> tuple:
-        y= random.randint(0, ROWS)
-        x= random.randint(0, COLS)
+    def new_food_coordinates(self, body, SNAKE_BOUNDS) -> tuple:
+        y= random.randint(SNAKE_BOUNDS[0], SNAKE_BOUNDS[1])
+        x= random.randint(SNAKE_BOUNDS[2], SNAKE_BOUNDS[3])
         if x%2!=0:
             x-=1
         while (y,x) in body:
-            y= random.randint(0, ROWS)
-            x= random.randint(0, COLS)
+            y= random.randint(SNAKE_BOUNDS[0], SNAKE_BOUNDS[1])
+            x= random.randint(SNAKE_BOUNDS[2], SNAKE_BOUNDS[3])
             if x%2!=0:
                 x-=1
         return y, x
@@ -87,37 +95,47 @@ class Snake:
         COLOR_GREEN_GREEN = curses.color_pair(1)
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_RED)
         COLOR_RED_RED = curses.color_pair(2)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_WHITE)
+        COLOR_WHITE_WHITE = curses.color_pair(3)
 
 
-        (ROWS, COLS) = (curses.LINES - 2, curses.COLS - 2)
+        LINES_MAIN_WINDOW = curses.LINES - 6
+        if curses.COLS % 2 == 0:
+            COLS_MAIN_WINDOW = curses.COLS - 10
+        else:
+            COLS_MAIN_WINDOW = curses.COLS - 11
 
-        main_window = curses.newwin(curses.LINES, curses.COLS, 0, 0)
-        score_window = curses.newwin(1, 12, 0, curses.COLS - 12)
+        SNAKE_BOUNDS = (1, LINES_MAIN_WINDOW - 2, 2, COLS_MAIN_WINDOW - 4) # (y1,y2,x1,x2) : snake can't get out of this bounds (but it can walk over this bounds)
+
+        main_window = curses.newwin(LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, 3, 5)
+        score_window = curses.newwin(1, 12, 1, curses.COLS - 20)
 
         score = 0
         # Initial snake
-        body = deque([(0,0)])
+        body = deque([(2,4)])
         direction = "RIGHT"
         last_key = "KEY_RIGHT"
 
-        y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
+        y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
         while last_key != 'q':
             main_window.clear()
 
-            (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, ROWS, COLS)
+            (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, SNAKE_BOUNDS)
             body.append((y, x))
             if self.verify_collision(body):
-                self.draw_game_over(main_window, ROWS, COLS, score)
+                self.draw_game_over(main_window, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, score)
                 break
             if self.check_food_eaten(body, y_food, x_food):
                 body.append((y, x))
-                y_food, x_food = self.new_food_coordinates(ROWS, COLS, body)
+                y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
                 score += 1
             else:
                 body.popleft()
 
             direction = self.calcule_direction(direction, last_key)
 
+            main_window.border(COLOR_WHITE_WHITE, COLOR_WHITE_WHITE, COLOR_WHITE_WHITE, COLOR_WHITE_WHITE, COLOR_WHITE_WHITE, COLOR_WHITE_WHITE, COLOR_WHITE_WHITE, COLOR_WHITE_WHITE)
+            self.draw_thick_border(main_window, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, COLOR_WHITE_WHITE)
             self.draw_snake(main_window, body, COLOR_GREEN_GREEN)
             self.draw_food(main_window, y_food, x_food, COLOR_RED_RED)
             main_window.refresh()

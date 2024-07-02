@@ -15,25 +15,30 @@ class TestSnake:
         snake_t = snake.Snake()
         assert snake_t.calcule_direction(current_direction, key) == expected
 
-    @pytest.mark.parametrize("y, x, direction, ROWS, COLS, expected",
-                             [(0, 0, "UP", 10, 10, (0, 0)),
-                              (0, 0, "RIGHT", 10, 10, (0, 2)),
-                              (10, 10, "DOWN", 10, 10, (10, 10)),
-                              (9, 9, "LEFT", 10, 10, (9, 7)),
-                              (5, 5, "UP", 10, 10, (4,5))])
-    def test_calculate_new_position(self, y, x, direction, ROWS, COLS, expected):
+    @pytest.mark.parametrize("y, x, direction, SNAKE_BOUNDS, expected",
+                             [(1, 2, "UP", (1, 10, 2, 20), (1, 2)),
+                              (1, 2, "RIGHT", (1, 10, 2, 20), (1, 4)),
+                              (10, 10, "DOWN", (1, 10, 2, 20), (10, 10)),
+                              (9, 8, "LEFT", (1, 10, 2, 20), (9, 6)),
+                              (5, 4, "UP", (1, 10, 2, 20), (4,4))])
+    def test_calculate_new_position(self, y, x, direction, SNAKE_BOUNDS, expected):
         s= snake.Snake()
-        assert s.calcule_new_position(y, x, direction, ROWS, COLS) == expected
+        assert s.calcule_new_position(y, x, direction, SNAKE_BOUNDS) == expected
 
+    
     @composite
-    def smaller_than(draw):
-        a = draw(integers(min_value=0))
+    def smaller_than_y(draw):
+        a = draw(integers(min_value=1))
         b = draw(integers(min_value=a))
         return a, b
-
+    @composite
+    def smaller_than_x(draw):
+        a = draw(integers(min_value=2)) * 2
+        b = draw(integers(min_value=a)) * 2
+        return a, b
     @given(strategies.tuples(
-            smaller_than(),
-            smaller_than(),
+            smaller_than_y(),
+            smaller_than_x(),
             strategies.just("UP") |
             strategies.just("DOWN") |
             strategies.just("LEFT") |
@@ -41,27 +46,31 @@ class TestSnake:
     @settings(max_examples=20)
     def test_property_calcule_new_position_always_inside(self,t):
         s = snake.Snake()
-        res_y, res_x = s.calcule_new_position(t[0][0],t[1][0],t[2],t[0][1],t[1][1])
-        assert res_y <= t[0][1] and res_x <= t[1][1]
+        SNAKE_BOUNDS = (1, t[0][1], 2, t[1][1])
+        res_y, res_x = s.calcule_new_position(t[0][0],t[1][0],t[2],SNAKE_BOUNDS)
+        assert res_y >= SNAKE_BOUNDS[0] and res_y <= SNAKE_BOUNDS[1] and res_x >= SNAKE_BOUNDS[2] and res_x <= SNAKE_BOUNDS[3] and res_x % 2 == 0
+    
         
-    @pytest.mark.parametrize("ROWS, COLS, body",
-                             [   (5, 5, [(0, 0), (0, 2), (0, 4)]),
-                                 (5, 5, [(0, 0), (0, 2), (0, 4)]),
-                                 (5, 5, [(2, 2), (3, 2), (3, 4)]),
-                                 (5, 5, [(2, 2), (3, 2), (3, 4)])])
-    def test_new_food_coordinates(self, ROWS, COLS, body):
+    @pytest.mark.parametrize("body, SNAKE_BOUNDS",
+                             [   ([(0, 0), (0, 2), (0, 4)], (1, 5, 2, 10)),
+                                 ([(0, 0), (0, 2), (0, 4)], (1, 5, 2, 10)),
+                                 ([(2, 2), (3, 2), (3, 4)], (1, 5, 2, 10)),
+                                 ([(2, 2), (3, 2), (3, 4)], (1, 5, 2, 10))])
+    def test_new_food_coordinates(self, body, SNAKE_BOUNDS):
         s = snake.Snake()
-        (y, x) = s.new_food_coordinates(ROWS, COLS, body)
+        (y, x) = s.new_food_coordinates(body, SNAKE_BOUNDS)
         assert (y, x) not in body
 
     @given(strategies.tuples(
-        strategies.integers(min_value=0),
-        strategies.integers(min_value=0)))
+        strategies.integers(min_value=10),
+        strategies.integers(min_value=20)
+        ))
     @settings(max_examples=10)
     def test_property_new_food_coordinates_always_inside(self,t):
         s = snake.Snake()
-        (y, x) = s.new_food_coordinates(t[0], t[1], [])
-        assert y <= t[0] and x <= t[1] and x % 2 == 0
+        SNAKE_BOUNDS = (1, t[0], 2, t[1])
+        (y, x) = s.new_food_coordinates([], SNAKE_BOUNDS)
+        assert y >= SNAKE_BOUNDS[0] and y <= SNAKE_BOUNDS[1] and x >= SNAKE_BOUNDS[2] and x <= SNAKE_BOUNDS[3] and x % 2 == 0
 
     @pytest.mark.parametrize("body, y_food, x_food, expected",
                              [  ([(0, 0), (0, 2), (0, 4)], 0, 6, False),
