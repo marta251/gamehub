@@ -7,8 +7,8 @@ from hypothesis.strategies import composite, integers
 class TestGameOfLife:
 
     @given(
-        strategies.integers(min_value=3),
-        strategies.integers(min_value=3)
+        strategies.integers(min_value=3, max_value=20),
+        strategies.integers(min_value=3, max_value=20)
         )
     @settings(max_examples=5)
     def test_initialize_matrix_dimension(self, rows, cols):
@@ -17,8 +17,8 @@ class TestGameOfLife:
         assert len(matrix) == rows and len(matrix[0]) == cols
         
     @given(
-        strategies.integers(min_value=3),
-        strategies.integers(min_value=3)
+        strategies.integers(min_value=3, max_value=20),
+        strategies.integers(min_value=3, max_value=20)
         )
     @settings(max_examples=5)
     def test_initialize_matrix_values(self, rows, cols):

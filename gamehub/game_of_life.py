@@ -28,19 +28,20 @@ class GameOfLife:
         return count
 
     def update_matrix(self, matrix : list[list[int]]) -> list[list[int]]:
-        for i in range(len(matrix)):
-            for j in range(len(matrix[0])):
-                live_neighbors = self.count_live_neighbors(matrix, i, j)
+            new_matrix = [[0 for _ in range(len(matrix[0]))] for _ in range(len(matrix))]
+            for i in range(len(matrix)):
+                for j in range(len(matrix[0])):
+                    live_neighbors = self.count_live_neighbors(matrix, i, j)
 
-                if matrix[i][j] == 1: # Cell is alive
-                    if live_neighbors < 2 or live_neighbors > 3: # Die because of underpopulation or overpopulation
-                        matrix[i][j] = 0
-                    elif live_neighbors == 3 or live_neighbors == 2:  # Survive
-                        matrix[i][j] = 1
-                else:         # Cell is dead
-                    if live_neighbors == 3: # Reproduce
-                        matrix[i][j] = 1    
-        return matrix
+                    if matrix[i][j] == 1: # Cell is alive
+                        if live_neighbors < 2 or live_neighbors > 3: # Die because of underpopulation or overpopulation
+                            new_matrix[i][j] = 0
+                        elif live_neighbors == 3 or live_neighbors == 2:  # Survive
+                            new_matrix[i][j] = 1
+                    else:         # Cell is dead
+                        if live_neighbors == 3: # Reproduce
+                            new_matrix[i][j] = 1    
+            return new_matrix
 
     #def draw_board(stdscr, rows, cols) -> None:
     '''
