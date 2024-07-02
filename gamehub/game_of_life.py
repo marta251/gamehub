@@ -1,6 +1,7 @@
 import curses
 from curses import wrapper
 import random
+import time
 
 class GameOfLife:
     def __init__(self):
@@ -52,7 +53,7 @@ class GameOfLife:
 
     def gameloop(self, stdscr) -> None:
         curses.curs_set(0)  # Hide cursor
-        #stdscr.nodelay(True) # Non-blocking input
+        stdscr.nodelay(True) # Non-blocking input
 
         # Define colors
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_WHITE)
@@ -60,15 +61,27 @@ class GameOfLife:
 
         matrix = self.initialize_matrix(curses.LINES, curses.COLS//2, 20)
         last_key = None
+        paused = False
         while last_key != 'q':
             stdscr.clear()
             self.draw_board(stdscr, matrix, COLOR_WHITE_WHITE)
             stdscr.refresh()
             matrix = self.update_matrix(matrix)
-            last_key = stdscr.getkey()
+            try:
+                last_key = stdscr.getkey()
+            except:
+                last_key = None
+
+            if last_key == ' ' and not paused:
+                paused = True
+                stdscr.nodelay(False)
+            elif last_key == ' ' and paused:
+                paused = False
+                stdscr.nodelay(True)
+                
+            if not paused:
+                time.sleep(0.25)
 
         
-
-
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
