@@ -9,7 +9,7 @@ class ChessPiece:
         self.position = position
 
     def opposite_color_pieces(self) -> str:
-        if self.color == 'w':
+        if self.color == 'b':
             return ['P', 'R', 'N', 'B', 'Q', 'K']
         else:
             return ['p', 'r', 'n', 'b', 'q', 'k']
@@ -68,10 +68,53 @@ class ChessPiece:
                 break
         return moves
 
+    def bishop_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
+        moves = []
+        #diagonal
+        x = self.position[0]
+        y = self.position[1]
+        #while there is an empty space you can move there
+        while x + 1 < 8 and y + 1 < 8 and matrix[y + 1][x + 1] == " ":
+            x += 1
+            y += 1
+            moves.append((x, y))
+            #if there is a piece of the opposite color you can take it (and stop)
+            if x + 1 < 8 and y + 1 < 8 and matrix[y+1][x+1] != " " and matrix[y+1][x+1] in self.opposite_color_pieces():
+                moves.append((x+1, y+1))
+                break
+        x = self.position[0]
+        y = self.position[1]
+        while x - 1 >= 0 and y - 1 >= 0 and matrix[y - 1][x - 1] == " ":
+            x -= 1
+            y -= 1
+            moves.append((x, y))
+            if x - 1 >= 0 and y - 1 >= 0 and matrix[y-1][x-1] != " " and matrix[y-1][x-1] in self.opposite_color_pieces():
+                moves.append((x-1, y-1))
+                break
+        x = self.position[0]
+        y = self.position[1]
+        while x + 1 < 8 and y - 1 >= 0 and matrix[y - 1][x + 1] == " ":
+            x += 1
+            y -= 1
+            moves.append((x, y))
+            if x + 1 < 8 and y - 1 >= 0 and matrix[y-1][x+1] != " " and matrix[y-1][x+1] in self.opposite_color_pieces():
+                moves.append((x+1, y-1))
+                break
+        x = self.position[0]
+        y = self.position[1]
+        while x - 1 >= 0 and y + 1 < 8 and matrix[y + 1][x - 1] == " ":
+            x -= 1
+            y += 1
+            moves.append((x, y))
+            if x - 1 >= 0 and y + 1 < 8 and matrix[y+1][x-1] != " " and matrix[y+1][x-1] in self.opposite_color_pieces():
+                moves.append((x-1, y+1))
+                break
+        return moves
 
-piece = ChessPiece(PieceType.ROOK, 'w', (0, 3))
-print (cb.ChessBoard("8/8/8/R3K3/8/8/8/8 w KQkq - 0 1").matrix)
-print(piece.legal_moves(cb.ChessBoard("8/8/8/R3k3/8/8/8/8 w KQkq - 0 1").matrix))
-print(piece.legal_moves(cb.ChessBoard("8/8/8/R3K3/8/8/8/8 w KQkq - 0 1").matrix)         )
+
+piece = ChessPiece(PieceType.BISHOP, 'w', (0, 3))
+print (cb.ChessBoard("8/8/8/B3K3/8/8/8/8 w KQkq - 0 1").matrix)
+print(piece.legal_moves(cb.ChessBoard("8/8/8/B3k3/8/8/8/8 w KQkq - 0 1").matrix))
+print(piece.legal_moves(cb.ChessBoard("8/8/8/B3K3/8/8/8/8 w KQkq - 0 1").matrix)         )
 
 
