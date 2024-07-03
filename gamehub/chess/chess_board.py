@@ -1,4 +1,5 @@
 class ChessBoard:
+    # Generates a chess board from a FEN string
     def __init__(self, fen: str) -> None:
         self.matrix = self.convert_fen_to_matrix(fen)
         self.playerToMove = fen.split(" ")[1]
@@ -7,14 +8,7 @@ class ChessBoard:
         self.halfMoveCounter = int(fen.split(" ")[4])
         self.fullMoveCounter = int(fen.split(" ")[5])
 
-    def __init__(self, matrix: list[list[str]], playerToMove: str, castlingRights: str, enPassant: str, halfMoveCounter: int, fullMoveCounter: int) -> None:
-        self.matrix = matrix
-        self.playerToMove = playerToMove
-        self.castlingRights = castlingRights
-        self.enPassant = enPassant
-        self.halfMoveCounter = halfMoveCounter
-        self.fullMoveCounter = fullMoveCounter
-    
+    # Converts a FEN string to a 2D matrix
     def convert_fen_to_matrix(self, fen: str) -> list[list[str]]:
         matrix = []
         fen = fen.split(" ")[0]
@@ -31,6 +25,7 @@ class ChessBoard:
 
         return matrix
     
+    # Converts a 2D matrix to a FEN string
     def convert_matrix_to_fen(self, matrix: list[list[str]]) -> str:
         fen = ""
         for row in matrix:
@@ -48,5 +43,6 @@ class ChessBoard:
             fen += "/"
         return fen[:-1]
     
+    # Converts the board to a FEN string
     def convert_board_to_fen(self) -> str:
         return self.convert_matrix_to_fen(self.matrix) + " " + self.playerToMove + " " + self.castlingRights + " " + self.enPassant + " " + str(self.halfMoveCounter) + " " + str(self.fullMoveCounter)
