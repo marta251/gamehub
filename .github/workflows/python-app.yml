@@ -31,10 +31,7 @@ jobs:
     - name: Lint with pylint
       run: |
         pylint gamehub/gamehub.py --exit-zero
-    - name: Test with pytest
-      run: |
-        pytest
-    - name: Code coverage
+    - name: Test and code coverage
       run: |
         coverage run -m pytest -v
         coverage report -m
