@@ -32,3 +32,13 @@ class TestChessBoard:
         matrix = cb.ChessBoard(fen).matrix
         piece = ChessPiece(piece, color, position)
         assert Counter(piece.legal_moves(matrix)) == Counter(expected)
+
+
+    @pytest.mark.parametrize("piece, color, position, fen, expected",
+                                [(PieceType.QUEEN, 'b', (3, 0), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", []),
+                                 (PieceType.QUEEN, 'w', (0, 3), "8/8/8/Q2p4/8/8/3p4/8 w KQkq - 0 1", [(0,0), (0,1), (0,2), (0,4), (0,5), (0,6), (0,7), (1,3), (2,3), (3,3), (1,2), (2,1), (3,0), (1,4), (2,5), (3,6)]),
+                                 (PieceType.QUEEN, 'w', (0, 3), "8/8/8/Q2P4/8/8/3P4/8 w KQkq - 0 1", [(0,0), (0,1), (0,2), (0,4), (0,5), (0,6), (0,7), (1,3), (2,3), (1,2), (2,1), (3,0), (1,4), (2,5)])])
+    def test_legal_moves_queen(self, piece: PieceType, color : str, position : tuple[int,int], fen : str, expected : tuple) -> None:
+        matrix = cb.ChessBoard(fen).matrix
+        piece = ChessPiece(piece, color, position)
+        assert Counter(piece.legal_moves(matrix)) == Counter(expected)

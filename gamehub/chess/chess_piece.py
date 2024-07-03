@@ -133,6 +133,9 @@ class ChessPiece:
         if x - 1 >= 0 and y - 2 >= 0 and (matrix[y-2][x-1] == " " or matrix[y-2][x-1] in self.opposite_color_pieces()):
             moves.append((x-1, y-2))
         return moves
+    
+    def queen_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
+        return self.rook_moves(matrix) + self.bishop_moves(matrix)
 
 
 piece = ChessPiece(PieceType.KNIGHT, 'w', (0, 3))
