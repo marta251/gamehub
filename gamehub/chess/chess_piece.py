@@ -70,7 +70,7 @@ class ChessPiece:
 
     def bishop_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
         moves = []
-        #diagonal
+        #first diagonal
         x = self.position[0]
         y = self.position[1]
         #while there is an empty space you can move there
@@ -91,6 +91,7 @@ class ChessPiece:
             if x - 1 >= 0 and y - 1 >= 0 and matrix[y-1][x-1] != " " and matrix[y-1][x-1] in self.opposite_color_pieces():
                 moves.append((x-1, y-1))
                 break
+        #second diagonal
         x = self.position[0]
         y = self.position[1]
         while x + 1 < 8 and y - 1 >= 0 and matrix[y - 1][x + 1] == " ":
@@ -110,10 +111,32 @@ class ChessPiece:
                 moves.append((x-1, y+1))
                 break
         return moves
+    
+    def knight_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
+        moves = []
+        x = self.position[0]
+        y = self.position[1]
+        if x + 2 < 8 and y + 1 < 8 and (matrix[y+1][x+2] == " " or matrix[y+1][x+2] in self.opposite_color_pieces()):
+            moves.append((x+2, y+1))
+        if x + 2 < 8 and y - 1 >= 0 and (matrix[y-1][x+2] == " " or matrix[y-1][x+2] in self.opposite_color_pieces()):
+            moves.append((x+2, y-1))
+        if x - 2 >= 0 and y + 1 < 8 and (matrix[y+1][x-2] == " " or matrix[y+1][x-2] in self.opposite_color_pieces()):
+            moves.append((x-2, y+1))
+        if x - 2 >= 0 and y - 1 >= 0 and (matrix[y-1][x-2] == " " or matrix[y-1][x-2] in self.opposite_color_pieces()):
+            moves.append((x-2, y-1))
+        if x + 1 < 8 and y + 2 < 8 and (matrix[y+2][x+1] == " " or matrix[y+2][x+1] in self.opposite_color_pieces()):
+            moves.append((x+1, y+2))
+        if x + 1 < 8 and y - 2 >= 0 and (matrix[y-2][x+1] == " " or matrix[y-2][x+1] in self.opposite_color_pieces()):
+            moves.append((x+1, y-2))
+        if x - 1 >= 0 and y + 2 < 8 and (matrix[y+2][x-1] == " " or matrix[y+2][x-1] in self.opposite_color_pieces()):
+            moves.append((x-1, y+2))
+        if x - 1 >= 0 and y - 2 >= 0 and (matrix[y-2][x-1] == " " or matrix[y-2][x-1] in self.opposite_color_pieces()):
+            moves.append((x-1, y-2))
+        return moves
 
 
-piece = ChessPiece(PieceType.BISHOP, 'w', (0, 3))
-print (cb.ChessBoard("8/8/8/B3K3/8/8/8/8 w KQkq - 0 1").matrix)
+piece = ChessPiece(PieceType.KNIGHT, 'w', (0, 3))
+print (cb.ChessBoard("8/8/8/N7/8/8/8/8 w KQkq - 0 1").matrix)
 print(piece.legal_moves(cb.ChessBoard("8/8/8/B3k3/8/8/8/8 w KQkq - 0 1").matrix))
 print(piece.legal_moves(cb.ChessBoard("8/8/8/B3K3/8/8/8/8 w KQkq - 0 1").matrix)         )
 
