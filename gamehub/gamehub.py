@@ -10,7 +10,7 @@ class GameHub:
         self.subparsers = self.parser.add_subparsers(dest="game", help="The game to be played.")
         self.setup_parsers()
 
-    def apply_bound(value : int, lower_bound : int, upper_bound : int):
+    def apply_bound(self, value : int, lower_bound : int, upper_bound : int):
         if value < lower_bound:
             return lower_bound
         elif value > upper_bound:
