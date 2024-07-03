@@ -35,3 +35,9 @@ class TestChessBoard:
     def test_convert_board_to_fen(self, expected : str, board : tuple) -> None:
         board = cb.ChessBoard(matrix=board[0], playerToMove=board[1], castlingRights=board[2], enPassant=board[3], halfMoveCounter=board[4], fullMoveCounter=board[5])
         assert board.convert_board_to_fen() == expected
+  
+    def test_constructor_raises_exception(self) -> None:
+        with pytest.raises(ValueError):
+            cb.ChessBoard(playerToMove='b', castlingRights='-', enPassant='-', fullMoveCounter=20)
+        with pytest.raises(ValueError):
+            cb.ChessBoard(playerToMove='b', castlingRights='-', enPassant='-', halfMoveCounter=3, fullMoveCounter=20)
