@@ -2,7 +2,6 @@ import argparse
 from . import snake, game_of_life
 
 class GameHub:
-
     def __init__(self) -> None:
         self.parser = argparse.ArgumentParser(prog="gamehub", description="GameHub is a game launcher for the terminal.")
         self.subparsers = self.parser.add_subparsers(dest="game", help="The game to be played.")
@@ -16,7 +15,7 @@ class GameHub:
         else:
             return value
         
-    def setup_parsers(self):
+    def setup_parsers(self) -> None:
         # Subparser for snake game
         snake_parser = self.subparsers.add_parser("snake", help="Play Snake.")
         snake_parser.add_argument("--difficulty", type=str, default="Medium", choices=["Easy","Medium","Hard"], help="The difficulty level of the game.")
@@ -27,7 +26,7 @@ class GameHub:
         game_of_life_parser.add_argument("--mode", type=str, default="Automatic", choices=["Manual","Automatic"], help="Manual: press any key to update; Automatic: update happens periodically.")
         game_of_life_parser.add_argument("--density", type=int, default=30, help="The initial density of the grid.") 
 
-    def run(self):
+    def run(self) -> None:
         args = self.parser.parse_args()
         if args.game == "snake":
             snake.Snake(args.difficulty).init_game()
@@ -35,4 +34,3 @@ class GameHub:
             game_of_life.GameOfLife(self.apply_bound(args.speed, 50, 10000),
                                     args.mode,
                                     self.apply_bound(args.density, 0, 100)).init_game()
-            

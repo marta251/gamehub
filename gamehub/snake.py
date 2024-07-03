@@ -7,7 +7,6 @@ import random
 #TODO: Add restart
 
 class Snake:
-
     def __init__(self, difficulty="Medium") -> None:
         self.delta_time = None
         if difficulty == "Easy":
