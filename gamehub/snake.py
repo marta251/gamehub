@@ -4,12 +4,18 @@ import time
 from collections import deque
 import random
 
-#TODO: Add restart and difficulty
+#TODO: Add restart
 
 class Snake:
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, difficulty="Medium") -> None:
+        self.delta_time = None
+        if difficulty == "Easy":
+            self.delta_time = 0.1
+        elif difficulty == "Medium":
+            self.delta_time = 0.05
+        else:
+            self.delta_time = 0.025
 
     def calcule_new_position(self, y : int, x : int, direction : str, SNAKE_BOUNDS : tuple[int, int, int, int]) -> tuple[int, int]:
         if direction == "UP":
@@ -146,7 +152,7 @@ class Snake:
             except:
                 last_key = None
 
-            time.sleep(0.05)
+            time.sleep(self.delta_time)
 
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper

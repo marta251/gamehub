@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "gamehub"
 version = "0.0.1"
 dependencies = []
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
   {name = "Marta Malagutti", email = "marta01.malagutti@edu.unife.it"},
   {name = "Riccardo Morelli", email = "riccardo.morelli@edu.unife.it"}

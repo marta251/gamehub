@@ -4,8 +4,10 @@ import random
 import time
 
 class GameOfLife:
-    def __init__(self):
-        pass
+    def __init__(self, speed=100, mode="Automatic", density=30):
+        self.delta_time = speed / 1000
+        self.mode = mode
+        self.density = density
 
     def initialize_matrix(self, rows : int, cols : int, density : int) -> list[list[int]]:
         matrix = [[0 for _ in range(cols)] for _ in range(rows)]
@@ -50,18 +52,19 @@ class GameOfLife:
                 if matrix[i][j] == 1:
                     stdscr.addstr(i, j * 2, "  ", color)
                 
-
+    
     def gameloop(self, stdscr) -> None:
         curses.curs_set(0)  # Hide cursor
-        stdscr.nodelay(True) # Non-blocking input
+
+        if self.mode == "Automatic":
+            stdscr.nodelay(True) # Non-blocking input
 
         # Define colors
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_WHITE)
         COLOR_WHITE_WHITE = curses.color_pair(1)
 
-        matrix = self.initialize_matrix(curses.LINES, curses.COLS//2, 20)
+        matrix = self.initialize_matrix(curses.LINES, curses.COLS//2, self.density)
         last_key = None
-        paused = False
         while last_key != 'q':
             stdscr.clear()
             self.draw_board(stdscr, matrix, COLOR_WHITE_WHITE)
@@ -72,16 +75,9 @@ class GameOfLife:
             except:
                 last_key = None
 
-            if last_key == ' ' and not paused:
-                paused = True
-                stdscr.nodelay(False)
-            elif last_key == ' ' and paused:
-                paused = False
-                stdscr.nodelay(True)
-                
-            if not paused:
-                time.sleep(0.25)
-
+            if self.mode == "Automatic":
+                time.sleep(self.delta_time)
+            
         
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
