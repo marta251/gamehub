@@ -33,5 +33,5 @@ class TestChessBoard:
                                  ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
                                  ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']],'w', 'KQkq', '-', 0, 1))])
     def test_convert_board_to_fen(self, expected : str, board : tuple) -> None:
-        board = cb.ChessBoard.generate_board_object(board[0], board[1], board[2], board[3], board[4], board[5])
+        board = cb.ChessBoard(matrix=board[0], playerToMove=board[1], castlingRights=board[2], enPassant=board[3], halfMoveCounter=board[4], fullMoveCounter=board[5])
         assert board.convert_board_to_fen() == expected

@@ -1,12 +1,22 @@
 class ChessBoard:
     # Generates a chess board from a FEN string
-    def __init__(self, fen: str) -> None:
-        self.matrix = self.convert_fen_to_matrix(fen)
-        self.playerToMove = fen.split(" ")[1]
-        self.castlingRights = fen.split(" ")[2]
-        self.enPassant = fen.split(" ")[3]
-        self.halfMoveCounter = int(fen.split(" ")[4])
-        self.fullMoveCounter = int(fen.split(" ")[5])
+    def __init__(self, fen=None, matrix=None, playerToMove=None, castlingRights=None, enPassant=None, halfMoveCounter=None, fullMoveCounter=None) -> None:
+        if fen is not None and matrix is None and playerToMove is None and castlingRights is None and enPassant is None and halfMoveCounter is None and fullMoveCounter is None:
+            self.matrix = self.convert_fen_to_matrix(fen)
+            self.playerToMove = fen.split(" ")[1]
+            self.castlingRights = fen.split(" ")[2]
+            self.enPassant = fen.split(" ")[3]
+            self.halfMoveCounter = int(fen.split(" ")[4])
+            self.fullMoveCounter = int(fen.split(" ")[5])
+        elif fen is None and matrix is not None and playerToMove is not None and castlingRights is not None and enPassant is not None and halfMoveCounter is not None and fullMoveCounter is not None:
+            self.matrix = matrix
+            self.playerToMove = playerToMove
+            self.castlingRights = castlingRights
+            self.enPassant = enPassant
+            self.halfMoveCounter = halfMoveCounter
+            self.fullMoveCounter = fullMoveCounter
+        else:
+            raise ValueError("Invalid arguments")
 
     # Converts a FEN string to a 2D matrix
     def convert_fen_to_matrix(self, fen: str) -> list[list[str]]:
