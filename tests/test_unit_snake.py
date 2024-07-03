@@ -12,7 +12,7 @@ class TestSnake:
                                 ("KEY_LEFT", "UP", "LEFT"),
                                 ("KEY_DOWN", "DOWN", "DOWN"),
                                 ("KEY_RIGHT", "LEFT", "LEFT")])
-    def test_calcule_direction(self, key : str, current_direction : str, expected : str):
+    def test_calcule_direction(self, key : str, current_direction : str, expected : str) -> None:
         snake_t = snake.Snake()
         assert snake_t.calcule_direction(current_direction, key) == expected
 
@@ -22,18 +22,18 @@ class TestSnake:
                               (10, 10, "DOWN", (1, 10, 2, 20), (10, 10)),
                               (9, 8, "LEFT", (1, 10, 2, 20), (9, 6)),
                               (5, 4, "UP", (1, 10, 2, 20), (4,4))])
-    def test_calculate_new_position(self, y : int, x : int, direction : str, SNAKE_BOUNDS : tuple[int, int, int, int], expected : tuple[int, int]):
+    def test_calculate_new_position(self, y : int, x : int, direction : str, SNAKE_BOUNDS : tuple[int, int, int, int], expected : tuple[int, int]) -> None:
         s= snake.Snake()
         assert s.calcule_new_position(y, x, direction, SNAKE_BOUNDS) == expected
 
     
     @composite
-    def smaller_than_y(draw):
+    def smaller_than_y(draw) -> tuple[int, int]:
         a = draw(integers(min_value=1))
         b = draw(integers(min_value=a))
         return a, b
     @composite
-    def smaller_than_x(draw):
+    def smaller_than_x(draw) -> tuple[int, int]:
         a = draw(integers(min_value=2)) * 2
         b = draw(integers(min_value=a)) * 2
         return a, b
@@ -45,7 +45,7 @@ class TestSnake:
             strategies.just("LEFT") |
             strategies.just("RIGHT")))
     @settings(max_examples=20)
-    def test_property_calcule_new_position_always_inside(self,t : tuple[tuple[int, int], tuple[int, int], str]):
+    def test_property_calcule_new_position_always_inside(self,t : tuple[tuple[int, int], tuple[int, int], str]) -> None:
         s = snake.Snake()
         SNAKE_BOUNDS = (1, t[0][1], 2, t[1][1])
         res_y, res_x = s.calcule_new_position(t[0][0],t[1][0],t[2],SNAKE_BOUNDS)

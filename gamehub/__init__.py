@@ -1,6 +1,6 @@
 from . import gamehub
 
-def main():
+def main() -> None:
     gamehub_instance = gamehub.GameHub()
     gamehub_instance.run()
 

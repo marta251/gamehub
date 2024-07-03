@@ -1,8 +1,6 @@
 import argparse
 from . import snake, game_of_life
 
-# TODO: Implement the relative tests for the following functions
-
 class GameHub:
 
     def __init__(self) -> None:
