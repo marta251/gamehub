@@ -168,3 +168,24 @@ class ChessPiece:
             if x - 1 >= 0 and y - 1 >= 0 and matrix[y-1][x-1] in self.opposite_color_pieces():
                 moves.append((x-1, y-1))
         return moves
+    
+    # check if the king of my color is under attack
+    def king_under_attack(self, matrix : list[list[str]]) -> bool:
+        if self.color == 'b':
+            opposite_color = 'w'
+        else:
+            opposite_color = 'b'
+        for i in range(8):
+            for j in range(8):
+                if matrix[i][j] == 'K' and opposite_color == 'b':
+                    king_position = (j, i)
+                if matrix[i][j] == 'k' and opposite_color == 'w':
+                    king_position = (j, i)
+        for i in range(8):
+            for j in range(8):
+                if matrix[i][j] in self.opposite_color_pieces() and matrix[i][j] != 'K' and matrix[i][j] != 'k':
+                    piece = ChessPiece(PieceType.from_char(matrix[i][j]), opposite_color, (j, i))
+                    if king_position in piece.legal_moves(matrix):
+                        return True
+        return False
+    
