@@ -52,6 +52,14 @@ class TestChessBoard:
         piece = ChessPiece(piece, color, position)
         assert Counter(piece.legal_moves(matrix)) == Counter(expected)
 
+    @pytest.mark.parametrize("piece, color, position, fen, expected",
+                                [(PieceType.KING, 'w', (4, 7), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", []),
+                                 (PieceType.KING, 'w', (0, 3), "8/8/P7/Kp6/8/8/8/8 w KQkq - 0 1", [(1,2), (1,3), (1,4), (0,4)])])
+    def test_legal_moves_king(self, piece: PieceType, color : str, position : tuple[int,int], fen : str, expected : tuple) -> None:
+        matrix = cb.ChessBoard(fen).matrix
+        piece = ChessPiece(piece, color, position)
+        assert Counter(piece.legal_moves(matrix)) == Counter(expected)
+
 
     @pytest.mark.parametrize("color, fen, expected",
                                 [('w', "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", False),
@@ -60,7 +68,7 @@ class TestChessBoard:
                                  ('w', "rn1q1rk1/pp2b1pp/5n2/2p2pB1/3P4/1QP2N2/PP1N1PPP/R4RK1 w - - 1 12", False)])
     def test_king_under_attack(self, color : str, fen : str, expected : bool) -> None:
         matrix = cb.ChessBoard(fen).matrix
-        piece = ChessPiece(PieceType.KING, color, (0,0))
+        piece = ChessPiece(PieceType.KING, color, (0,0)) # position and piece type doesn't matter for this test
         assert piece.king_under_attack(matrix) == expected
     
 

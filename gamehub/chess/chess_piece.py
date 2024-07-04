@@ -169,6 +169,30 @@ class ChessPiece:
                 moves.append((x-1, y-1))
         return moves
     
+    
+    def king_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
+        moves = []
+        x = self.position[0]
+        y = self.position[1]
+        if x + 1 < 8 and (matrix[y][x+1] == " " or matrix[y][x+1] in self.opposite_color_pieces()):
+            moves.append((x+1, y))
+        if x - 1 >= 0 and (matrix[y][x-1] == " " or matrix[y][x-1] in self.opposite_color_pieces()):
+            moves.append((x-1, y))
+        if y + 1 < 8 and (matrix[y+1][x] == " " or matrix[y+1][x] in self.opposite_color_pieces()):
+            moves.append((x, y+1))
+        if y - 1 >= 0 and (matrix[y-1][x] == " " or matrix[y-1][x] in self.opposite_color_pieces()):
+            moves.append((x, y-1))
+        if x + 1 < 8 and y + 1 < 8 and (matrix[y+1][x+1] == " " or matrix[y+1][x+1] in self.opposite_color_pieces()):
+            moves.append((x+1, y+1))
+        if x + 1 < 8 and y - 1 >= 0 and (matrix[y-1][x+1] == " " or matrix[y-1][x+1] in self.opposite_color_pieces()):
+            moves.append((x+1, y-1))
+        if x - 1 >= 0 and y + 1 < 8 and (matrix[y+1][x-1] == " " or matrix[y+1][x-1] in self.opposite_color_pieces()):
+            moves.append((x-1, y+1))
+        if x - 1 >= 0 and y - 1 >= 0 and (matrix[y-1][x-1] == " " or matrix[y-1][x-1] in self.opposite_color_pieces()):
+            moves.append((x-1, y-1))
+        return moves
+    
+    
     # check if the king of my color is under attack
     def king_under_attack(self, matrix : list[list[str]]) -> bool:
         if self.color == 'b':
