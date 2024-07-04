@@ -3,6 +3,9 @@ import gamehub.chess.chess_board as cb
 
 class ChessPiece:
 
+    #TODO: arroccamento, en passant, promozione
+    #
+
     def __init__(self, piece: PieceType, color: str, position: tuple[int, int]) -> None:
         self.piece = piece
         self.color = color
@@ -18,19 +21,32 @@ class ChessPiece:
     def legal_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
         #if is not pinned and not under check
         if self.piece == PieceType.PAWN:
-            return self.pawn_moves(matrix)
+            moves =  self.pawn_moves(matrix)
         elif self.piece == PieceType.KNIGHT:
-            return self.knight_moves(matrix)
+            moves = self.knight_moves(matrix)
         elif self.piece == PieceType.BISHOP:
-            return self.bishop_moves(matrix)
+            moves = self.bishop_moves(matrix)
         elif self.piece == PieceType.ROOK:
             return self.rook_moves(matrix)
         elif self.piece == PieceType.QUEEN:
-            return self.queen_moves(matrix)
+            moves = self.queen_moves(matrix)
         elif self.piece == PieceType.KING:
-            return self.king_moves(matrix)
+            moves = self.king_moves(matrix)
         else:
             raise ValueError("Invalid piece type")
+        
+        #remove moves that put the king under attack
+        '''
+        for move in moves:
+            new_matrix = [row.copy() for row in matrix]
+            char = matrix[self.position[1]][self.position[0]]
+            new_matrix[self.position[1]][self.position[0]] = " "
+            new_matrix[move[1]][move[0]] = char
+            if self.king_under_attack(new_matrix):
+                moves.remove(move)
+        '''
+        return moves
+            
 
     def rook_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
         moves = []
