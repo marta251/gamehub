@@ -136,11 +136,35 @@ class ChessPiece:
     
     def queen_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
         return self.rook_moves(matrix) + self.bishop_moves(matrix)
-
-
-piece = ChessPiece(PieceType.KNIGHT, 'w', (0, 3))
-print (cb.ChessBoard("8/8/8/N7/8/8/8/8 w KQkq - 0 1").matrix)
-print(piece.legal_moves(cb.ChessBoard("8/8/8/B3k3/8/8/8/8 w KQkq - 0 1").matrix))
-print(piece.legal_moves(cb.ChessBoard("8/8/8/B3K3/8/8/8/8 w KQkq - 0 1").matrix)         )
-
-
+    
+    def pawn_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
+        moves = []
+        x = self.position[0]
+        y = self.position[1]
+        if self.color == 'b':
+            # first move
+            if y == 1 and matrix[y+1][x] == " " and matrix[y+2][x] == " ":
+                moves.append((x, y+2))
+            if y == 1 and matrix[y+1][x] == " ": 
+                moves.append((x, y+1))
+            if y > 1 and y + 1 < 8 and matrix[y+1][x] == " ":
+                moves.append((x, y+1))
+            # diagonal captures
+            if x + 1 < 8 and y + 1 < 8 and matrix[y+1][x+1] in self.opposite_color_pieces():
+                moves.append((x+1, y+1))
+            if x - 1 >= 0 and y + 1 < 8 and matrix[y+1][x-1] in self.opposite_color_pieces():
+                moves.append((x-1, y+1))
+        else:
+            # first move
+            if y == 6 and matrix[y-1][x] == " " and matrix[y-2][x] == " ":
+                moves.append((x, y-2))
+            if y == 6 and matrix[y-1][x] == " ":
+                moves.append((x, y-1))
+            if y < 6 and y - 1 >= 0 and matrix[y-1][x] == " ":
+                moves.append((x, y-1))
+            # diagonal captures
+            if x + 1 < 8 and y - 1 >= 0 and matrix[y-1][x+1] in self.opposite_color_pieces():
+                moves.append((x+1, y-1))
+            if x - 1 >= 0 and y - 1 >= 0 and matrix[y-1][x-1] in self.opposite_color_pieces():
+                moves.append((x-1, y-1))
+        return moves
