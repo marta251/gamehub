@@ -4,7 +4,6 @@ import gamehub.chess.chess_board as cb
 class ChessPiece:
 
     #TODO: arroccamento, en passant, promozione
-    #
 
     def __init__(self, piece: PieceType, color: str, position: tuple[int, int]) -> None:
         self.piece = piece
@@ -228,4 +227,3 @@ class ChessPiece:
                     if king_position in piece.legal_moves(matrix):
                         return True
         return False
-    

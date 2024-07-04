@@ -50,8 +50,10 @@ class GameOfLife:
         for i in range(len(matrix)):
             for j in range(len(matrix[0])):
                 if matrix[i][j] == 1:
-                    stdscr.addstr(i, j * 2, "  ", color)
-                
+                        try:
+                            stdscr.addstr(i, j * 2, "  ", color)
+                        except curses.error:
+                            pass                
     
     def gameloop(self, stdscr) -> None:
         curses.curs_set(0)  # Hide cursor

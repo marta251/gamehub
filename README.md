@@ -1,30 +1,29 @@
 # GameHub
-A collection of games you can play from your terminal
+A collection of games you can play from your terminal.
 
+The project involves the development of a command-line application that will allow users to play a series of classic games. Specifically, the graphical interface will be managed directly in the terminal using Python's curses library (https://docs.python.org/3/howto/curses.html).
 
-
-Il progetto consiste nello sviluppo di un'applicazione da riga di comando che permetterà di giocare a una serie di giochi classici. In particolare l'interfaccia grafica sarà gestita direttamente nel terminale per mezzo della libreria curses di Python (https://docs.python.org/3/howto/curses.html).
-Segue l'elenco dei giochi che siamo intenzionati ad implementare:
-- Scacchi
-- Dama
+Here is the list of games we intend to implement:
+- Chess
+- Checkers
 - Conway's Game of Life
 - Snake
 - Wordle
-In ogni caso l'applicazione sarà strutturata in modo da permettere una facile estensione con nuovi giochi nel futuro. 
 
-Ogni gioco avrà il proprio set di opzioni: 
-- Scacchi: sarà possibile selezionare modalità single-player (giocare da solo contro un'IA) o multiplayer (giocare in due dallo stesso terminale) 
-- Dama: sarà possibile selezionare modalità single-player o multiplayer
-- Conway's Game of Life: modalità manuale (viene eseguita un'epoca ogni volta che viene ricevuto un input da parte dell'utente) o modalità automatica (periodicamente viene eseguita un'iterazione, in tal caso è anche possibile definire l'intervallo di tempo desiderato)
-- Snake: velocità di gioco 
+Nevertheless, the application will be structured to allow easy extension with new games in the future.
 
-L'idea per gestire l'IA, necessaria per la modalità single-player degli scacchi, è quella di utilizzare la API ReST di Stockfish oppure l'applicazione di Stockfish stessa. In particolare, l'intenzione è quella di realizzare due immagini utilizzando Docker: la prima sarà più leggera e necessiterà di essere connessi ad internet per giocare a scacchi, in quanto utilizzerà l'API ReST per calcolare le mosse dell'IA, mentre la seconda conterrà al proprio interno Stockfish, sarà dunque più pesante ma non necessiterà di essere connessi ad internet.
+Each game will have its own set of options:
+- Chess: single-player mode (play alone against an AI) or multiplayer mode (two players on the same terminal)
+- Checkers: single-player or multiplayer mode
+- Conway's Game of Life: speed, manual mode (an epoch is executed each time user input is received) or automatic mode (an iteration is periodically executed, with the option to set the desired time interval), density
+- Snake: game difficulty
 
+The idea for handling the AI, necessary for the single-player mode in chess, is to use the Stockfish ReST API or the Stockfish application itself. Specifically, the plan is to create two Docker images: the first will be lighter and require an Internet connection as it will use the ReST API to calculate AI moves, while the second will contain Stockfish itself, making it heavier but not requiring an Internet connection.
 
-Esempi di utilizzo: 
+Usage examples:
 
-gamehub scacchi --mode multiplayer
+gamehub chess --mode multiplayer
 
-gamehub game-of-life --mode automatic -t 0.2
+gamehub game-of-life --speed 100 --mode Automatic --density 45
 
-gamehub snake --speed fast
+gamehub snake --difficulty Easy

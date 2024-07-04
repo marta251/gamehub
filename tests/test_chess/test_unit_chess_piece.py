@@ -1,4 +1,4 @@
-import pytest
+import pytest # type: ignore
 from gamehub.chess.piece_type import PieceType
 import gamehub.chess.chess_board as cb
 from gamehub.chess.chess_piece import ChessPiece
@@ -72,8 +72,7 @@ class TestChessBoard:
         assert piece.king_under_attack(matrix) == expected
     
 
-
-
+    #TODO: ValueError exception could be raised
 
     '''
     Visto che è parametrica potresti fare na roba del genere ...
