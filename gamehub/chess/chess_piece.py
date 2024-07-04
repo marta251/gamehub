@@ -17,7 +17,7 @@ class ChessPiece:
             return ['p', 'r', 'n', 'b', 'q', 'k']
 
 
-    def legal_moves(self, matrix : list[list[str]]) -> list[tuple[int, int]]:
+    def legal_moves(self, matrix : list[list[str]], check_king_under_attack=True) -> list[tuple[int, int]]:
         #if is not pinned and not under check
         if self.piece == PieceType.PAWN:
             moves =  self.pawn_moves(matrix)
@@ -35,15 +35,15 @@ class ChessPiece:
             raise ValueError("Invalid piece type")
         
         #remove moves that put the king under attack
-        '''
-        for move in moves:
-            new_matrix = [row.copy() for row in matrix]
-            char = matrix[self.position[1]][self.position[0]]
-            new_matrix[self.position[1]][self.position[0]] = " "
-            new_matrix[move[1]][move[0]] = char
-            if self.king_under_attack(new_matrix):
-                moves.remove(move)
-        '''
+        if check_king_under_attack:
+            for move in moves:
+                new_matrix = [row.copy() for row in matrix]
+                char = matrix[self.position[1]][self.position[0]]
+                new_matrix[self.position[1]][self.position[0]] = " "
+                new_matrix[move[1]][move[0]] = char
+                if self.king_under_attack(new_matrix):
+                    moves.remove(move)
+        
         return moves
             
 
@@ -216,14 +216,18 @@ class ChessPiece:
             opposite_color = 'b'
         for i in range(8):
             for j in range(8):
-                if matrix[i][j] == 'K' and opposite_color == 'b':
+                if matrix[i][j] == 'K' and self.color == 'w':
                     king_position = (j, i)
-                if matrix[i][j] == 'k' and opposite_color == 'w':
+                if matrix[i][j] == 'k' and self.color == 'b':
                     king_position = (j, i)
         for i in range(8):
             for j in range(8):
                 if matrix[i][j] in self.opposite_color_pieces() and matrix[i][j] != 'K' and matrix[i][j] != 'k':
                     piece = ChessPiece(PieceType.from_char(matrix[i][j]), opposite_color, (j, i))
-                    if king_position in piece.legal_moves(matrix):
+                    if king_position in piece.legal_moves(matrix, False):
                         return True
         return False
+    
+piece = ChessPiece(PieceType.PAWN, 'w', (4, 6))
+matrix = cb.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1").matrix
+print(piece.legal_moves(matrix))
