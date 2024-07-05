@@ -227,7 +227,3 @@ class ChessPiece:
                     if king_position in piece.legal_moves(matrix, False):
                         return True
         return False
-    
-piece = ChessPiece(PieceType.PAWN, 'w', (4, 6))
-matrix = cb.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1").matrix
-print(piece.legal_moves(matrix))
