@@ -55,9 +55,24 @@ class Chess:
         window.attroff(color)     
         window.refresh()
     
+    def get_input(self, window):
+        key = window.getch()
+        if key == curses.KEY_MOUSE:
+            _, x, y, _, _ = curses.getmouse()
+            return y, x
+        else:
+            return None, None
+        
+    def from_input_to_board(self, y, x):
+        return y//3, x//5
+
 
     def gameloop(self, stdscr) -> None:
+
+        #Didn't find a way to detect mouse events in a new window. So, I'm using the stdscr window to detect mouse events.
+
         curses.curs_set(0)  # Hide cursor
+        curses.mousemask(1) # Enable mouse events
 
         # Define colors
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
@@ -66,11 +81,20 @@ class Chess:
         stdscr.clear()
         stdscr.refresh()
         
-        board_window = curses.newwin(26, 44, curses.LINES//2 - 13, curses.COLS//2 - 22)
+        debug_window = curses.newwin(1, 30, 0, 0)
         
-        self.draw_board(board_window, COLOR_WHITE_WHITE)
+        self.draw_board(stdscr, COLOR_WHITE_WHITE)
         
-        stdscr.getch()
+        while True:
+            debug_window.attron(curses.color_pair(1))
+            debug_window.clear()
+            y, x = self.get_input(stdscr)
+            if x is not None and y is not None:
+                y, x = self.from_input_to_board(y, x)
+            debug_window.addstr(0, 0, "({},{})".format(y, x))
+            debug_window.refresh()
+            debug_window.attroff(curses.color_pair(1))
+            
             
         
     def init_game(self) -> None:
