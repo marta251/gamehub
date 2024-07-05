@@ -1,5 +1,4 @@
 import chess_board
-import chess_piece
 import curses
 from curses import wrapper
 from curses.textpad import rectangle
@@ -23,34 +22,12 @@ class Chess:
         for i in range(8):
             for j in range(8):
                 rectangle(window, i*3, j*5, i*3+2, j*5+4)
-                if char_matrix[i][j] == "P":
-                    piece_char = "♟"
-                elif char_matrix[i][j] == "R":
-                    piece_char = "♜"
-                elif char_matrix[i][j] == "N":
-                    piece_char = "♞"
-                elif char_matrix[i][j] == "B":
-                    piece_char = "♝"
-                elif char_matrix[i][j] == "Q":
-                    piece_char = "♛"
-                elif char_matrix[i][j] == "K":
-                    piece_char = "♚"
-                elif char_matrix[i][j] == "p":
-                    piece_char = "♙"
-                elif char_matrix[i][j] == "r":
-                    piece_char = "♖"
-                elif char_matrix[i][j] == "n":
-                    piece_char = "♘"
-                elif char_matrix[i][j] == "b":
-                    piece_char = "♗"
-                elif char_matrix[i][j] == "q":
-                    piece_char = "♕"
-                elif char_matrix[i][j] == "k":
-                    piece_char = "♔"
+                if char_matrix[i][j] != None:
+                    piece_symbol = char_matrix[i][j].piece_symbol
                 else:
-                    piece_char = " "
+                    piece_symbol = " "
 
-                window.addstr(i*3 + 1, j*5 + 2, piece_char)
+                window.addstr(i*3 + 1, j*5 + 2, piece_symbol)
 
         window.attroff(color)     
         window.refresh()

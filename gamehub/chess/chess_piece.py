@@ -11,19 +11,43 @@ class ChessPiece:
         else:
             self.color = 'b'
         
-        # set the piece type
-        if piece_char == 'P' or piece_char == 'p':
+        # set the piece type and the piece symbol
+        if piece_char == 'P':
             self.piece = 'Pawn'
-        elif piece_char == 'R' or piece_char == 'r':
+            self.piece_symbol = '♟'
+        elif piece_char == 'p':
+            self.piece = 'Pawn'
+            self.piece_symbol = '♙'
+        elif piece_char == 'R':
             self.piece = 'Rook'
-        elif piece_char == 'N' or piece_char == 'n':
+            self.piece_symbol = '♜'
+        elif piece_char == 'r':
+            self.piece = 'Rook'
+            self.piece_symbol = '♖'
+        elif piece_char == 'N':
             self.piece = 'Knight'
-        elif piece_char == 'B' or piece_char == 'b':
+            self.piece_symbol = '♞'
+        elif piece_char == 'n':
+            self.piece = 'Knight'
+            self.piece_symbol = '♘'
+        elif piece_char == 'B':
             self.piece = 'Bishop'
-        elif piece_char == 'Q' or piece_char == 'q':
+            self.piece_symbol = '♝'
+        elif piece_char == 'b':
+            self.piece = 'Bishop'
+            self.piece_symbol = '♗'
+        elif piece_char == 'Q':
             self.piece = 'Queen'
-        elif piece_char == 'K' or piece_char == 'k':
+            self.piece_symbol = '♛'
+        elif piece_char == 'q':
+            self.piece = 'Queen'
+            self.piece_symbol = '♕'
+        elif piece_char == 'K':
             self.piece = 'King'
+            self.piece_symbol = '♚'
+        elif piece_char == 'k':
+            self.piece = 'King'
+            self.piece_symbol = '♔'
         else:
             raise ValueError("Invalid piece")
 
