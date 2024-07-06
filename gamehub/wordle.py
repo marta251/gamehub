@@ -4,7 +4,11 @@ import random
 import string
 import time
 
-#TODO: create some more functions to make the code more readable
+#TODO: create some more functions to make the code more readable, comment the word to guess, 
+# change the position of the whole game (maybe to the center of the screen) and
+# update the alphabet (maybe it is not necessary)
+
+# TODO: add 'self' in the function signature and add init_game function
 
 def how_good_is_the_guess(new_guessed : str, to_guess : str, alphabet : list, old_guessed : str) -> tuple:
     updated_guess = ["_" for _ in range(5)]
@@ -29,7 +33,6 @@ def generate_list_of_words() -> list:
         words = file.read().splitlines()
     return words
 
-# TODO: add 'self' in the function signature and add init_game function
 def gameloop(stdscr) -> None:
     curses.curs_set(0)
 
