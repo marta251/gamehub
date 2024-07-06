@@ -36,12 +36,21 @@ class Chess:
         key = window.getch()
         if key == curses.KEY_MOUSE:
             _, x, y, _, _ = curses.getmouse()
-            return y, x
+            return x, y
         else:
             return None, None
         
-    def from_input_to_board(self, y, x):
-        return y//3, x//5
+    def from_input_to_board(self, x, y):
+        return x//5, y//3
+
+    def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
+        if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
+            possible_moves = self.board.matrix[start[1]][start[0]].legal_moves(self.board.matrix)
+            self.board.matrix[start[1]][start[0]].position = end
+            if end in possible_moves:
+                self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
+                self.board.matrix[start[1]][start[0]] = None
+            return possible_moves
 
 
     def gameloop(self, stdscr) -> None:
@@ -59,18 +68,51 @@ class Chess:
         stdscr.refresh()
         
         debug_window = curses.newwin(1, 30, 0, 0)
-        
         self.draw_board(stdscr, COLOR_WHITE_WHITE)
         
         while True:
+            
+            # y, x = self.get_input(stdscr)
+            # if x is not None and y is not None:
+            #     y_start, x_start = self.from_input_to_board(y, x)
+            #     if self.board.matrix[y_start][x_start] != None:
+            #         y, x = self.get_input(stdscr)
+            #     if x is not None and y is not None:
+            #         y_end, x_end = self.from_input_to_board(y, x)
+            
+            # self.move_piece((y_start, x_start), (y_end, x_end))
+            # self.draw_board(stdscr, COLOR_WHITE_WHITE)
+
+
+                    
+
             debug_window.attron(curses.color_pair(1))
             debug_window.clear()
-            y, x = self.get_input(stdscr)
-            if x is not None and y is not None:
-                y, x = self.from_input_to_board(y, x)
-            debug_window.addstr(0, 0, "({},{})".format(y, x))
+            x1, y1 = self.get_input(stdscr)
+            x2, y2 = self.get_input(stdscr)
+            if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
+                x_start, y_start = self.from_input_to_board(x1, y1)
+                x_end, y_end = self.from_input_to_board(x2, y2)
+                possible = self.move_piece((x_start, y_start), (x_end, y_end))
+                self.draw_board(stdscr, COLOR_WHITE_WHITE)
+                stdscr.addstr(20, 0, str(possible))
+
+            debug_window.addstr(0, 0, "({},{}) ({},{})".format(x_start, y_start, x_end, y_end))
             debug_window.refresh()
             debug_window.attroff(curses.color_pair(1))
+
+            # debug_window.attron(curses.color_pair(1))
+            # debug_window.clear()
+            # x1, y1 = self.get_input(stdscr)
+            # if x1 is not None and y1 is not None :
+            #     x_start, y_start = self.from_input_to_board(x1, y1)
+
+            # debug_window.addstr(0, 0, "({},{})".format(y_start, x_start))
+            # debug_window.refresh()
+            # debug_window.attroff(curses.color_pair(1))
+
+
+
             
             
         

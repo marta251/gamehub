@@ -262,19 +262,17 @@ class ChessPiece:
     
     # check if the king of my color is under attack
     def king_under_attack(self, matrix : list[list['ChessPiece']]) -> bool:
-        if self.color == 'b':
-            opposite_color = 'w'
-        else:
-            opposite_color = 'b'
         for i in range(8):
             for j in range(8):
                 if matrix[i][j]!=None and matrix[i][j].piece_char == 'K' and self.color == 'w':
                     king_position = (j, i)
+                    break
                 if matrix[i][j]!=None and matrix[i][j].piece_char == 'k' and self.color == 'b':
                     king_position = (j, i)
+                    break
         for i in range(8):
             for j in range(8):
-                if matrix[i][j] != None and matrix[i][j].is_enemy(self) and matrix[i][j].piece_char != 'K' and matrix[i][j].piece_char != 'k':
+                if matrix[i][j] != None and matrix[i][j].is_enemy(self):
                     piece_moves = matrix[i][j].legal_moves(matrix, False)
                     if king_position in piece_moves:
                         return True
