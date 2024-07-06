@@ -104,34 +104,47 @@ class ChessPiece:
         #horizontal
         x = self.position[0]
         #while there is an empty space you can move there
-        while x + 1 < 8 and matrix[self.position[1]][x + 1] == None:
+        while x + 1 < 8:
             x += 1
-            moves.append((x, self.position[1]))
+            #if there is an empty space you can move there
+            if matrix[self.position[1]][x] == None:
+                moves.append((x, self.position[1]))
             #if there is a piece of the opposite color you can take it (and stop)
-            if x + 1 < 8 and matrix[self.position[1]][x+1] != None and matrix[self.position[1]][x+1].is_enemy(self):
-                moves.append((x+1, self.position[1]))
+            elif matrix[self.position[1]][x] != None and matrix[self.position[1]][x].is_enemy(self):
+                moves.append((x, self.position[1]))
+                break
+            else:
                 break
         x = self.position[0]
-        while x - 1 >= 0 and matrix[self.position[1]][x - 1] == None:
+        while x - 1 >= 0:
             x -= 1
-            moves.append((x, self.position[1]))
-            if x - 1 >= 0 and matrix[self.position[1]][x-1] != None and matrix[self.position[1]][x-1].is_enemy(self):
-                moves.append((x-1, self.position[1]))
+            if matrix[self.position[1]][x] == None:
+                moves.append((x, self.position[1]))
+            elif matrix[self.position[1]][x] != None and matrix[self.position[1]][x].is_enemy(self):
+                moves.append((x, self.position[1]))
+                break
+            else:
                 break
         #vertical
         y = self.position[1]
-        while y + 1 < 8 and matrix[y + 1][self.position[0]] == None:
-            y += 1
-            moves.append((self.position[0], y))
-            if y + 1 < 8 and matrix[y+1][self.position[0]] != None and matrix[y+1][self.position[0]].is_enemy(self):
-                moves.append((self.position[0], y+1))
+        while y + 1 < 8:
+            y+=1
+            if matrix[y][self.position[0]] == None:
+                moves.append((self.position[0], y))
+            elif matrix[y][self.position[0]] != None and matrix[y][self.position[0]].is_enemy(self):
+                moves.append((self.position[0], y))
+                break
+            else:
                 break
         y = self.position[1]
-        while y - 1 >= 0 and matrix[y - 1][self.position[0]] == None:
+        while y - 1 >= 0:
             y -= 1
-            moves.append((self.position[0], y))
-            if y-1 >= 0 and matrix[y-1][self.position[0]] != None and matrix[y-1][self.position[0]].is_enemy(self):
-                moves.append((self.position[0], y-1))
+            if matrix[y][self.position[0]] == None:
+                moves.append((self.position[0], y))
+            elif matrix[y][self.position[0]] != None and matrix[y][self.position[0]].is_enemy(self):
+                moves.append((self.position[0], y))
+                break
+            else:
                 break
         return moves
 
@@ -141,43 +154,61 @@ class ChessPiece:
         x = self.position[0]
         y = self.position[1]
         #while there is an empty space you can move there
-        while x + 1 < 8 and y + 1 < 8 and matrix[y + 1][x + 1] == None:
+        while x + 1 < 8 and y + 1 < 8:
             x += 1
             y += 1
-            moves.append((x, y))
+            #if there is an empty space you can move there
+            if matrix[y][x] == None:
+                moves.append((x, y))
             #if there is a piece of the opposite color you can take it (and stop)
-            if x + 1 < 8 and y + 1 < 8 and matrix[y+1][x+1] != None and matrix[y+1][x+1].is_enemy(self):
-                moves.append((x+1, y+1))
+            elif matrix[y][x] != None and matrix[y][x].is_enemy(self):
+                moves.append((x, y))
+                break
+            else:
                 break
         x = self.position[0]
         y = self.position[1]
-        while x - 1 >= 0 and y - 1 >= 0 and matrix[y - 1][x - 1] == None:
+        while x - 1 >= 0 and y - 1 >= 0:
             x -= 1
             y -= 1
-            moves.append((x, y))
-            if x - 1 >= 0 and y - 1 >= 0 and matrix[y-1][x-1] != None and matrix[y-1][x-1].is_enemy(self):
-                moves.append((x-1, y-1))
+            if matrix[y][x] == None:
+                moves.append((x, y))
+            elif matrix[y][x] != None and matrix[y][x].is_enemy(self):
+                moves.append((x, y))
+                break
+            else:
                 break
         #second diagonal
         x = self.position[0]
         y = self.position[1]
-        while x + 1 < 8 and y - 1 >= 0 and matrix[y - 1][x + 1] == None:
+        while x + 1 < 8 and y - 1 >= 0:
             x += 1
             y -= 1
-            moves.append((x, y))
-            if x + 1 < 8 and y - 1 >= 0 and matrix[y-1][x+1] != None and matrix[y-1][x+1].is_enemy(self):
-                moves.append((x+1, y-1))
+            if matrix[y][x] == None:
+                moves.append((x, y))
+            elif matrix[y][x] != None and matrix[y][x].is_enemy(self):
+                moves.append((x, y))
+                break
+            else:
                 break
         x = self.position[0]
         y = self.position[1]
-        while x - 1 >= 0 and y + 1 < 8 and matrix[y + 1][x - 1] == None:
+        while x - 1 >= 0 and y + 1 < 8:
             x -= 1
             y += 1
-            moves.append((x, y))
-            if x - 1 >= 0 and y + 1 < 8 and matrix[y+1][x-1] != None and matrix[y+1][x-1].is_enemy(self):
-                moves.append((x-1, y+1))
+            if matrix[y][x] == None:
+                moves.append((x, y))
+            elif matrix[y][x] != None and matrix[y][x].is_enemy(self):
+                moves.append((x, y))
+                break
+            else:
                 break
         return moves
+    
+            # if x + 1 < 8 and y + 1 < 8 and matrix[y+1][x+1] != None and matrix[y+1][x+1].is_enemy(self):
+            #     moves.append((x+1, y+1))
+            # if x - 1 >= 0 and y + 1 < 8 and matrix[y+1][x-1] != None and matrix[y+1][x-1].is_enemy(self):
+            #     moves.append((x-1, y+1))
     
     def knight_moves(self, matrix : list[list['ChessPiece']]) -> list[tuple[int, int]]:
         moves = []

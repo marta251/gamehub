@@ -45,9 +45,10 @@ class Chess:
 
     def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
         if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
-            possible_moves = self.board.matrix[start[1]][start[0]].legal_moves(self.board.matrix)
-            self.board.matrix[start[1]][start[0]].position = end
+            piece_to_move = self.board.matrix[start[1]][start[0]]
+            possible_moves = piece_to_move.legal_moves(self.board.matrix)
             if end in possible_moves:
+                piece_to_move.position = end
                 self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
                 self.board.matrix[start[1]][start[0]] = None
             return possible_moves
@@ -95,7 +96,8 @@ class Chess:
                 x_end, y_end = self.from_input_to_board(x2, y2)
                 possible = self.move_piece((x_start, y_start), (x_end, y_end))
                 self.draw_board(stdscr, COLOR_WHITE_WHITE)
-                stdscr.addstr(20, 0, str(possible))
+                stdscr.addstr(25, 0, str(possible))
+                stdscr.addstr(26, 0, str(self.board.convert_board_to_fen()))
 
             debug_window.addstr(0, 0, "({},{}) ({},{})".format(x_start, y_start, x_end, y_end))
             debug_window.refresh()
