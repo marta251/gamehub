@@ -70,13 +70,3 @@ class ChessBoard:
     # Converts the board to a FEN string
     def convert_board_to_fen(self) -> str:
         return self.convert_matrix_to_fen(self.matrix) + " " + self.playerToMove + " " + self.castlingRights + " " + self.enPassant + " " + str(self.halfMoveCounter) + " " + str(self.fullMoveCounter)
-
-
-# board = ChessBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1").matrix
-# print(board)
-# board_fen = ChessBoard(matrix=board, playerToMove="w", castlingRights="KQkq", enPassant="-", halfMoveCounter=0, fullMoveCounter=1).convert_board_to_fen()
-# print(board_fen)
-
-matrix = ChessBoard("rn1q1rk1/pp2b1pp/5n2/2p2pB1/3P4/1QP2N2/PP1N1PPP/R4RK1 w - - 1 12").matrix
-piece = matrix[6][7]
-print(piece.king_under_attack(matrix))

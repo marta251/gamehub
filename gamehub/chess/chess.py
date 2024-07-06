@@ -68,7 +68,6 @@ class Chess:
         stdscr.clear()
         stdscr.refresh()
         
-        debug_window = curses.newwin(1, 30, 0, 0)
         self.draw_board(stdscr, COLOR_WHITE_WHITE)
         
         while True:
@@ -87,8 +86,6 @@ class Chess:
 
                     
 
-            debug_window.attron(curses.color_pair(1))
-            debug_window.clear()
             x1, y1 = self.get_input(stdscr)
             x2, y2 = self.get_input(stdscr)
             if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
@@ -96,27 +93,13 @@ class Chess:
                 x_end, y_end = self.from_input_to_board(x2, y2)
                 possible = self.move_piece((x_start, y_start), (x_end, y_end))
                 self.draw_board(stdscr, COLOR_WHITE_WHITE)
-                stdscr.addstr(25, 0, str(possible))
-                stdscr.addstr(26, 0, str(self.board.convert_board_to_fen()))
+                stdscr.addstr(26, 0, "Valid Moves: " + str(possible))
+                stdscr.addstr(27, 0, "Board: " + str(self.board.convert_board_to_fen()))
 
-            debug_window.addstr(0, 0, "({},{}) ({},{})".format(x_start, y_start, x_end, y_end))
-            debug_window.refresh()
-            debug_window.attroff(curses.color_pair(1))
+            stdscr.addstr(25, 0, "Cursor Input: ({},{}) ({},{})".format(x_start, y_start, x_end, y_end))
+            stdscr.refresh()
+            stdscr.attroff(curses.color_pair(1))
 
-            # debug_window.attron(curses.color_pair(1))
-            # debug_window.clear()
-            # x1, y1 = self.get_input(stdscr)
-            # if x1 is not None and y1 is not None :
-            #     x_start, y_start = self.from_input_to_board(x1, y1)
-
-            # debug_window.addstr(0, 0, "({},{})".format(y_start, x_start))
-            # debug_window.refresh()
-            # debug_window.attroff(curses.color_pair(1))
-
-
-
-            
-            
         
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
