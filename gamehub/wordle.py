@@ -5,8 +5,8 @@ import string
 import time
 
 #TODO: create some more functions to make the code more readable, comment the word to guess, 
-# change the position of the whole game (maybe to the center of the screen) and
-# update the alphabet (maybe it is not necessary)
+# change the position of the whole game (maybe to the center of the screen),
+# update the alphabet (maybe it is not necessary) and fix the argparse
 
 # TODO: add 'self' in the function signature and add init_game function
 
