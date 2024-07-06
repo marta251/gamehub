@@ -70,22 +70,7 @@ class Chess:
         
         self.draw_board(stdscr, COLOR_WHITE_WHITE)
         
-        while True:
-            
-            # y, x = self.get_input(stdscr)
-            # if x is not None and y is not None:
-            #     y_start, x_start = self.from_input_to_board(y, x)
-            #     if self.board.matrix[y_start][x_start] != None:
-            #         y, x = self.get_input(stdscr)
-            #     if x is not None and y is not None:
-            #         y_end, x_end = self.from_input_to_board(y, x)
-            
-            # self.move_piece((y_start, x_start), (y_end, x_end))
-            # self.draw_board(stdscr, COLOR_WHITE_WHITE)
-
-
-                    
-
+        while True:    
             x1, y1 = self.get_input(stdscr)
             x2, y2 = self.get_input(stdscr)
             if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
