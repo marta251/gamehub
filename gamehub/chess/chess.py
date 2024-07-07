@@ -2,15 +2,16 @@ import chess_board
 import curses
 from curses import wrapper
 from curses.textpad import rectangle
+import time
 
 
 class Chess: 
     def __init__(self):
-        self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+        self.board = chess_board.ChessBoard( "4k3/8/8/8/8/8/8/RNBQKBNR w KQkq - 0 1")
         self.players = ["w", "b"]
         self.current_player = self.players[0]
         self.turn = 1
-        self.check, self.checkmate = False, False
+        self.check, self.checkmate, self.stalemate = False, False, False
 
     def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
         if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
@@ -29,8 +30,8 @@ class Chess:
                     all_possible_moves = all_possible_moves + self.board.matrix[i][j].legal_moves(self.board.matrix)
         return all_possible_moves
     
-    def detect_check_and_checkmate(self):
-        check, checkmate = False, False
+    def detect_check_checkmate_stalemate(self):
+        check, checkmate, stalemate = False, False, False
         matrix = self.board.matrix
         king_position = self.board.detect_king_coordinates(self.current_player)
         if matrix[king_position[1]][king_position[0]].king_under_attack(matrix):
@@ -38,7 +39,12 @@ class Chess:
             all_possible_moves = self.get_all_possible_moves()
             if len(all_possible_moves) == 0:
                 checkmate = True
-        return check, checkmate
+        else:
+            all_possible_moves = self.get_all_possible_moves()
+            if len(all_possible_moves) == 0:
+                stalemate = True
+
+        return check, checkmate, stalemate
 
     def init_curses(self):
         curses.curs_set(0)  # Hide cursor
@@ -55,6 +61,7 @@ class Chess:
                 window.addstr(27, 0, "Player to Move: " + str(self.current_player))
                 window.addstr(28, 0, "Check: " + str(self.check))
                 window.addstr(29, 0, "Checkmate: " + str(self.checkmate))
+                window.addstr(30, 0, "Stalemate: " + str(self.stalemate))
 
     def draw_board(self, window, color, moves=None, moves_color=None, check_visualization=False, check_color=None, king_coordinates=None) -> None:
 
@@ -92,11 +99,27 @@ class Chess:
         window.attroff(color)     
         window.refresh()
 
-    def update_screen(self, window, color, moves=None, moves_color=None, check_visualization=False, check_color=None, king_coordinates=None):
-        window.clear()
-        self.draw_board(window, color, moves, moves_color, check_visualization, check_color, king_coordinates)
-        self.draw_debug_messages(window)
-        window.refresh()
+    def update_screen(self, window, color, moves=None, moves_color=None, check_visualization=False, check_color=None, king_coordinates=None, end_game=False) -> None:
+        if not end_game:
+            window.clear()
+            self.draw_board(window, color, moves, moves_color, check_visualization, check_color, king_coordinates)
+            self.draw_debug_messages(window)
+            window.refresh()
+        else:
+            window.clear()
+            if self.checkmate:
+                self.draw_board(window, color, None, None, True, check_color, king_coordinates)
+            elif self.stalemate:
+                self.draw_board(window, color)
+            if self.checkmate:
+                if self.current_player == "w":
+                    window.addstr(26, 0, "Checkmate. Black wins.")
+                else:
+                    window.addstr(26, 0, "Checkmate. White wins.")
+            elif self.stalemate:
+                window.addstr(26, 0, "Stalemate.")
+            window.refresh()
+            time.sleep(3)
 
     def get_input(self, window):
         key = window.getch()
@@ -119,7 +142,7 @@ class Chess:
         
         self.draw_board(stdscr, COLOR_WHITE_BLACK)
         
-        while not self.checkmate:
+        while not self.checkmate and not self.stalemate:
             # Selecting the piece to move
             x1, y1 = self.get_input(stdscr)
             x_start, y_start = self.from_input_to_board(x1, y1)
@@ -141,7 +164,7 @@ class Chess:
                     self.turn += 1
                     self.board.playerToMove = self.current_player
                     self.board.fullMoveCounter = self.turn
-                    self.check, self.checkmate = self.detect_check_and_checkmate()
+                    self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
 
                     if not self.check:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
@@ -154,7 +177,9 @@ class Chess:
                     else:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
 
-        
+        self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
+
+
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
 
