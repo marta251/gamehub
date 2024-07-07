@@ -66,7 +66,32 @@ class Chess:
                 self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
                 self.board.matrix[start[1]][start[0]] = None
             
+    def get_all_possible_moves(self):
+        all_possible_moves = []
+        for i in range(8):
+            for j in range(8):
+                if self.board.matrix[i][j] != None and self.board.matrix[i][j].color == self.current_player:
+                    all_possible_moves = all_possible_moves + self.board.matrix[i][j].legal_moves(self.board.matrix)
+        return all_possible_moves
+    
+    def detect_check_and_checkmate(self):
+        check, checkmate = False, False
+        matrix = self.board.matrix
+        for i in range(8):
+            for j in range(8):
+                if matrix[i][j]!=None and matrix[i][j].piece_char == 'K' and self.current_player == 'w':
+                    king_position = (j, i)
+                if matrix[i][j]!=None and matrix[i][j].piece_char == 'k' and self.current_player == 'b':
+                    king_position = (j, i)
+        if matrix[king_position[1]][king_position[0]].king_under_attack(matrix):
+            check = True
+            all_possible_moves = self.get_all_possible_moves()
+            if len(all_possible_moves) == 0:
+                checkmate = True
+        return check, checkmate
 
+
+        
 
     def gameloop(self, stdscr) -> None:
 
@@ -114,6 +139,9 @@ class Chess:
                 stdscr.addstr(26, 0, "Player to Move: " + str(self.current_player))
                 stdscr.addstr(27, 0, "Valid Moves: " + str(possible))
                 stdscr.addstr(28, 0, "Board: " + str(self.board.convert_board_to_fen()))
+                stdscr.addstr(29, 0, "Check: " + str(self.detect_check_and_checkmate()[0]))
+                stdscr.addstr(30, 0, "Checkmate: " + str(self.detect_check_and_checkmate()[1]))
+                stdscr.addstr(31, 0, "All Possible Moves: " + str(self.get_all_possible_moves()[:10]))
                 stdscr.refresh()
 
                 # Selecting the destination
@@ -129,6 +157,7 @@ class Chess:
                     stdscr.addstr(25, 0, "Last Move: ({},{}) ({},{}) : Valid".format(x_start, y_start, x_end, y_end))
                     stdscr.addstr(26, 0, "Player to Move: " + str(self.current_player))
                     stdscr.addstr(28, 0, "Board: " + str(self.board.convert_board_to_fen()))
+                    
                     stdscr.refresh()
                     
                 else:
