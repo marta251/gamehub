@@ -1,3 +1,5 @@
+import copy
+
 class ChessPiece:
 
     #TODO: arroccamento, en passant, promozione
@@ -78,24 +80,24 @@ class ChessPiece:
         elif self.piece == 'Bishop':
             moves = self.bishop_moves(matrix)
         elif self.piece == 'Rook':
-            return self.rook_moves(matrix)
+            moves = self.rook_moves(matrix)
         elif self.piece == 'Queen':
             moves = self.queen_moves(matrix)
         elif self.piece == 'King':
             moves = self.king_moves(matrix)
         else:
             raise ValueError("Invalid piece type")
-        
+
         #remove moves that put the king under attack
-        # if check_king_under_attack:
-        #     for move in moves:
-        #         new_matrix = [row.copy() for row in matrix]
-        #         piece = matrix[self.position[1]][self.position[0]]
-        #         new_matrix[self.position[1]][self.position[0]] = None
-        #         new_matrix[move[1]][move[0]] = piece
-        #         if self.king_under_attack(new_matrix):
-        #             moves.remove(move)
-        
+        if check_king_under_attack:
+            for move in moves[:]: #iterate over a copy of the list (to avoid removing elements while iterating over the list)       
+                new_matrix = copy.deepcopy(matrix)
+                piece = new_matrix[self.position[1]][self.position[0]]
+                piece.position = move
+                new_matrix[self.position[1]][self.position[0]] = None
+                new_matrix[move[1]][move[0]] = piece
+                if self.king_under_attack(new_matrix):
+                    moves.remove(move)
         return moves
             
 
@@ -205,10 +207,6 @@ class ChessPiece:
                 break
         return moves
     
-            # if x + 1 < 8 and y + 1 < 8 and matrix[y+1][x+1] != None and matrix[y+1][x+1].is_enemy(self):
-            #     moves.append((x+1, y+1))
-            # if x - 1 >= 0 and y + 1 < 8 and matrix[y+1][x-1] != None and matrix[y+1][x-1].is_enemy(self):
-            #     moves.append((x-1, y+1))
     
     def knight_moves(self, matrix : list[list['ChessPiece']]) -> list[tuple[int, int]]:
         moves = []
@@ -293,14 +291,13 @@ class ChessPiece:
     
     # check if the king of my color is under attack
     def king_under_attack(self, matrix : list[list['ChessPiece']]) -> bool:
+        # Determine the position of the king of my color
         for i in range(8):
             for j in range(8):
                 if matrix[i][j]!=None and matrix[i][j].piece_char == 'K' and self.color == 'w':
                     king_position = (j, i)
-                    break
                 if matrix[i][j]!=None and matrix[i][j].piece_char == 'k' and self.color == 'b':
                     king_position = (j, i)
-                    break
         for i in range(8):
             for j in range(8):
                 if matrix[i][j] != None and matrix[i][j].is_enemy(self):

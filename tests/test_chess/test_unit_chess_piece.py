@@ -4,6 +4,7 @@ from collections import Counter
 
 
 class TestChessBoard:
+    
     @pytest.mark.parametrize("position, fen, expected",
                                 [((0, 0), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", []),
                                  ((0, 3), "7k/8/8/R3k3/8/8/8/7K w KQkq - 0 1", [(0,0), (0,1), (0,2), (0,4), (0,5), (0,6), (0,7), (1,3), (2,3), (3,3), (4,3)]),
@@ -11,9 +12,6 @@ class TestChessBoard:
     def test_legal_moves_rook(self, position : tuple[int,int], fen : str, expected : tuple) -> None:
         matrix = ChessBoard(fen).matrix
         piece = matrix[position[1]][position[0]]
-        print (matrix)
-        print (piece)
-
         assert Counter(piece.legal_moves(matrix)) == Counter(expected)
     
     @pytest.mark.parametrize("position, fen, expected",
