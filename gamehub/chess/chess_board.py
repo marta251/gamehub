@@ -70,3 +70,10 @@ class ChessBoard:
     # Converts the board to a FEN string
     def convert_board_to_fen(self) -> str:
         return self.convert_matrix_to_fen(self.matrix) + " " + self.playerToMove + " " + self.castlingRights + " " + self.enPassant + " " + str(self.halfMoveCounter) + " " + str(self.fullMoveCounter)
+    
+    def detect_king_coordinates (self, color):
+        for i in range(8):
+            for j in range(8):
+                if self.matrix[i][j] != None and (self.matrix[i][j].piece_char == "K" or self.matrix[i][j].piece_char == "k") and self.matrix[i][j].color == color:
+                    return (j, i)
+        return None
