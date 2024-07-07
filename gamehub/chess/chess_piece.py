@@ -87,14 +87,14 @@ class ChessPiece:
             raise ValueError("Invalid piece type")
         
         #remove moves that put the king under attack
-        if check_king_under_attack:
-            for move in moves:
-                new_matrix = [row.copy() for row in matrix]
-                piece = matrix[self.position[1]][self.position[0]]
-                new_matrix[self.position[1]][self.position[0]] = None
-                new_matrix[move[1]][move[0]] = piece
-                if self.king_under_attack(new_matrix):
-                    moves.remove(move)
+        # if check_king_under_attack:
+        #     for move in moves:
+        #         new_matrix = [row.copy() for row in matrix]
+        #         piece = matrix[self.position[1]][self.position[0]]
+        #         new_matrix[self.position[1]][self.position[0]] = None
+        #         new_matrix[move[1]][move[0]] = piece
+        #         if self.king_under_attack(new_matrix):
+        #             moves.remove(move)
         
         return moves
             

@@ -9,10 +9,12 @@ class Chess:
         self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         self.players = ["w", "b"]
         self.current_player = self.players[0]
-        self.turn = 0
+        self.turn = 1
 
 
-    def draw_board(self, window, color):
+
+
+    def draw_board(self, window, color, moves=None, moves_color=None) -> None:
 
         char_matrix = self.board.matrix
 
@@ -21,7 +23,14 @@ class Chess:
 
         for i in range(8):
             for j in range(8):
-                rectangle(window, i*3, j*5, i*3+2, j*5+4)
+                if moves != None and (j, i) in moves:
+                    window.attroff(color)
+                    window.attron(moves_color)
+                    rectangle(window, i*3, j*5, i*3+2, j*5+4)
+                    window.attroff(moves_color)
+                    window.attron(color)
+                else:
+                    rectangle(window, i*3, j*5, i*3+2, j*5+4)
                 if char_matrix[i][j] != None:
                     piece_symbol = char_matrix[i][j].piece_symbol
                 else:
@@ -31,6 +40,8 @@ class Chess:
 
         window.attroff(color)     
         window.refresh()
+
+
     
     def get_input(self, window):
         key = window.getch()
@@ -41,7 +52,10 @@ class Chess:
             return None, None
         
     def from_input_to_board(self, x, y):
-        return x//5, y//3
+        if x != None and y != None and x//5 >= 0 and x//5 < 8 and y//3 >= 0 and y//3 < 8:
+            return x//5, y//3
+        else:
+            return None, None
 
     def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
         if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
@@ -51,7 +65,7 @@ class Chess:
                 piece_to_move.position = end
                 self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
                 self.board.matrix[start[1]][start[0]] = None
-            return possible_moves
+            
 
 
     def gameloop(self, stdscr) -> None:
@@ -63,27 +77,66 @@ class Chess:
 
         # Define colors
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        COLOR_WHITE_WHITE = curses.color_pair(1)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        COLOR_WHITE_BLACK = curses.color_pair(1)
+        COLOR_GREEN_BLACK = curses.color_pair(2)
         
         stdscr.clear()
         stdscr.refresh()
         
-        self.draw_board(stdscr, COLOR_WHITE_WHITE)
+        self.draw_board(stdscr, COLOR_WHITE_BLACK)
         
-        while True:    
-            x1, y1 = self.get_input(stdscr)
-            x2, y2 = self.get_input(stdscr)
-            if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
-                x_start, y_start = self.from_input_to_board(x1, y1)
-                x_end, y_end = self.from_input_to_board(x2, y2)
-                possible = self.move_piece((x_start, y_start), (x_end, y_end))
-                self.draw_board(stdscr, COLOR_WHITE_WHITE)
-                stdscr.addstr(26, 0, "Valid Moves: " + str(possible))
-                stdscr.addstr(27, 0, "Board: " + str(self.board.convert_board_to_fen()))
+        # while True:    
+        #     x1, y1 = self.get_input(stdscr)
+        #     x2, y2 = self.get_input(stdscr)
+        #     if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
+        #         x_start, y_start = self.from_input_to_board(x1, y1)
+        #         x_end, y_end = self.from_input_to_board(x2, y2)
+        #         possible = self.move_piece((x_start, y_start), (x_end, y_end))
+        #         self.draw_board(stdscr, COLOR_WHITE_BLACK)
+        #         stdscr.addstr(26, 0, "Valid Moves: " + str(possible))
+        #         stdscr.addstr(27, 0, "Board: " + str(self.board.convert_board_to_fen()))
 
-            stdscr.addstr(25, 0, "Cursor Input: ({},{}) ({},{})".format(x_start, y_start, x_end, y_end))
-            stdscr.refresh()
-            stdscr.attroff(curses.color_pair(1))
+        #     stdscr.addstr(25, 0, "Cursor Input: ({},{}) ({},{})".format(x_start, y_start, x_end, y_end))
+        #     stdscr.refresh()
+        #     stdscr.attroff(curses.color_pair(1))
+
+        while True:
+            # Selecting the piece to move
+            x1, y1 = self.get_input(stdscr)
+            x_start, y_start = self.from_input_to_board(x1, y1)
+            # Check if the cursor is on a piece, and if it's the current player's piece
+            if x_start is not None and y_start is not None and self.board.matrix[y_start][x_start] != None and self.board.matrix[y_start][x_start].color == self.current_player:
+                possible = self.board.matrix[y_start][x_start].legal_moves(self.board.matrix)
+                stdscr.clear()
+                self.draw_board(stdscr, COLOR_WHITE_BLACK, possible, COLOR_GREEN_BLACK)
+                stdscr.addstr(25, 0, "Cursor Input: ({},{})".format(x_start, y_start))
+                stdscr.addstr(26, 0, "Player to Move: " + str(self.current_player))
+                stdscr.addstr(27, 0, "Valid Moves: " + str(possible))
+                stdscr.addstr(28, 0, "Board: " + str(self.board.convert_board_to_fen()))
+                stdscr.refresh()
+
+                # Selecting the destination
+                x2, y2 = self.get_input(stdscr)
+                x_end, y_end = self.from_input_to_board(x2, y2)
+                if (x_end, y_end) in possible:
+                    self.move_piece((x_start, y_start), (x_end, y_end))
+                    self.current_player = self.players[(self.turn) % 2]
+                    self.turn += 1
+                    self.board.playerToMove = self.current_player
+                    self.board.fullMoveCounter = self.turn
+                    self.draw_board(stdscr, COLOR_WHITE_BLACK)
+                    stdscr.addstr(25, 0, "Last Move: ({},{}) ({},{}) : Valid".format(x_start, y_start, x_end, y_end))
+                    stdscr.addstr(26, 0, "Player to Move: " + str(self.current_player))
+                    stdscr.addstr(28, 0, "Board: " + str(self.board.convert_board_to_fen()))
+                    stdscr.refresh()
+                    
+                else:
+                    self.draw_board(stdscr, COLOR_WHITE_BLACK)
+                    stdscr.addstr(25, 0, "Last Move: ({},{}) ({},{}) : Invalid".format(x_start, y_start, x_end, y_end))
+                    stdscr.addstr(26, 0, "Player to Move: " + str(self.current_player))
+                    stdscr.addstr(28, 0, "Board: " + str(self.board.convert_board_to_fen()))
+                    stdscr.refresh()
 
         
     def init_game(self) -> None:
