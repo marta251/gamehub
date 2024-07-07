@@ -1,5 +1,5 @@
 import argparse
-from . import snake, game_of_life
+from . import snake, game_of_life, wordle
 
 class GameHub:
     def __init__(self) -> None:
@@ -24,7 +24,10 @@ class GameHub:
         game_of_life_parser = self.subparsers.add_parser("game_of_life", help="Play Game of Life.")
         game_of_life_parser.add_argument("--speed", type=int, default=100, help="The speed of the simulation in ms.")
         game_of_life_parser.add_argument("--mode", type=str, default="Automatic", choices=["Manual","Automatic"], help="Manual: press any key to update; Automatic: update happens periodically.")
-        game_of_life_parser.add_argument("--density", type=int, default=30, help="The initial density of the grid.") 
+        game_of_life_parser.add_argument("--density", type=int, default=30, help="The initial density of the grid.")
+
+        # Subparser for Wordle
+        wordle_parser = self.subparsers.add_parser("wordle", help="Play Wordle.")
 
     def run(self) -> None:
         args = self.parser.parse_args()
@@ -34,3 +37,5 @@ class GameHub:
             game_of_life.GameOfLife(self.apply_bound(args.speed, 50, 10000),
                                     args.mode,
                                     self.apply_bound(args.density, 0, 100)).init_game()
+        elif args.game == "wordle":
+            wordle.Wordle().init_game()
