@@ -125,9 +125,11 @@ class Chess:
         key = window.getch()
         if key == curses.KEY_MOUSE:
             _, x, y, _, _ = curses.getmouse()
-            return x, y
+            return x, y, None
+        elif key == ord('q'):
+            return None, None, "q"
         else:
-            return None, None
+            return None, None, None
         
     def from_input_to_board(self, x, y):
         if x != None and y != None and x//5 >= 0 and x//5 < 8 and y//3 >= 0 and y//3 < 8:
@@ -144,7 +146,9 @@ class Chess:
         
         while not self.checkmate and not self.stalemate:
             # Selecting the piece to move
-            x1, y1 = self.get_input(stdscr)
+            x1, y1, exit = self.get_input(stdscr)
+            if exit == "q":
+                break
             x_start, y_start = self.from_input_to_board(x1, y1)
 
             # Check if the cursor is on a piece, and if it's the current player's piece
@@ -156,7 +160,9 @@ class Chess:
                     self.update_screen(stdscr, COLOR_WHITE_BLACK, possible, COLOR_GREEN_BLACK, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
 
                 # Selecting the destination
-                x2, y2 = self.get_input(stdscr)
+                x2, y2, exit = self.get_input(stdscr)
+                if exit == "q":
+                    break
                 x_end, y_end = self.from_input_to_board(x2, y2)
                 if (x_end, y_end) in possible:
                     self.move_piece((x_start, y_start), (x_end, y_end))
@@ -177,7 +183,8 @@ class Chess:
                     else:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
 
-        self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
+        if self.checkmate or self.stalemate:
+            self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
 
 
     def init_game(self) -> None:
