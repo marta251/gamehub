@@ -5,6 +5,7 @@ import time
 
 class GameOfLife:
     def __init__(self, speed=100, mode="Automatic", density=30):
+        self.speed = speed
         self.delta_time = speed / 1000
         self.mode = mode
         self.density = density
