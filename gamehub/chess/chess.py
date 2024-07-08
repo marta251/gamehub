@@ -7,7 +7,7 @@ import time
 
 class Chess: 
     def __init__(self):
-        self.board = chess_board.ChessBoard( "4k3/8/8/8/8/8/8/RNBQKBNR w KQkq - 0 1")
+        self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         self.players = ["w", "b"]
         self.current_player = self.players[0]
         self.turn = 1
@@ -140,7 +140,7 @@ class Chess:
 
         COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
         
-        self.draw_board(stdscr, COLOR_WHITE_BLACK)
+        self.update_screen(stdscr, COLOR_WHITE_BLACK)
         
         while not self.checkmate and not self.stalemate:
             # Selecting the piece to move
