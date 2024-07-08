@@ -1,5 +1,6 @@
 import argparse
 from . import snake, game_of_life, wordle
+import gamehub.chess.chess as chess
 
 class GameHub:
     def __init__(self) -> None:
@@ -29,6 +30,9 @@ class GameHub:
         # Subparser for Wordle
         wordle_parser = self.subparsers.add_parser("wordle", help="Play Wordle.")
 
+        # Subparser for Chess
+        chess_parser = self.subparsers.add_parser("chess", help="Play Chess.")
+
     def run(self) -> None:
         args = self.parser.parse_args()
         if args.game == "snake":
@@ -39,3 +43,5 @@ class GameHub:
                                     self.apply_bound(args.density, 0, 100)).init_game()
         elif args.game == "wordle":
             wordle.Wordle().init_game()
+        elif args.game == "chess":
+            chess.Chess().init_game()

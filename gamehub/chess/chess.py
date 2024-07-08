@@ -1,4 +1,4 @@
-import chess_board
+import gamehub.chess.chess_board as chess_board
 import curses
 from curses import wrapper
 from curses.textpad import rectangle
@@ -182,7 +182,3 @@ class Chess:
 
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
-
-
-    
-Chess().init_game()
