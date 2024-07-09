@@ -118,7 +118,7 @@ class Snake:
         last_key = "KEY_RIGHT"
 
         y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
-        while last_key != 'q':
+        while last_key != '\x1b':
             main_window.clear()
 
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, SNAKE_BOUNDS)

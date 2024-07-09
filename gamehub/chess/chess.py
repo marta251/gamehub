@@ -127,10 +127,10 @@ class Chess:
         if key == curses.KEY_MOUSE:
             _, x, y, _, _ = curses.getmouse()
             return x, y, None
-        elif key == ord('q'):
-            return None, None, "q"
+        elif key == 27:
+            return None, None, True
         else:
-            return None, None, None
+            return None, None, False
         
     def from_input_to_board(self, x, y):
         if x != None and y != None and x//5 >= 0 and x//5 < 8 and y//3 >= 0 and y//3 < 8:
@@ -148,7 +148,7 @@ class Chess:
         while not self.checkmate and not self.stalemate:
             # Selecting the piece to move
             x1, y1, exit = self.get_input(stdscr)
-            if exit == "q":
+            if exit:
                 break
             x_start, y_start = self.from_input_to_board(x1, y1)
 
@@ -162,7 +162,7 @@ class Chess:
 
                 # Selecting the destination
                 x2, y2, exit = self.get_input(stdscr)
-                if exit == "q":
+                if exit:
                     break
                 x_end, y_end = self.from_input_to_board(x2, y2)
                 if (x_end, y_end) in possible:
