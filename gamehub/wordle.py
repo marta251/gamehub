@@ -65,7 +65,6 @@ class Wordle:
 
             stdscr.addstr(1, 0, "Inserted word: " + "".join(void_guessed_word))
             stdscr.refresh()
-            # TODO: possibility to cancel the entire word before pressing Enter
             while characters < 5:
                 inserted_char = stdscr.getkey()
                 
