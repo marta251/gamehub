@@ -38,7 +38,7 @@ class Wordle:
         stdscr.addstr(2, 0, "Until now: " + "".join(guessed_word))
         stdscr.addstr(3, 0, "Guesses left: " + str(guesses))
         stdscr.addstr(6, 0, "Available letters: " + "".join(alphabet))
-        stdscr.addstr(8, 0, "Enter a five letter word and press Enter to confirm your choice.")
+        stdscr.addstr(0, 0, "Enter a five letter word and press Enter to confirm your choice or press ESC to exit.")
         stdscr.refresh()
 
     def generate_list_of_words(self) -> list:
@@ -65,20 +65,33 @@ class Wordle:
 
             stdscr.addstr(1, 0, "Inserted word: " + "".join(void_guessed_word))
             stdscr.refresh()
-
-            for i in range(5): # The player can insert 5 characters from the alphabet and then press Enter
+            # TODO: possibility to cancel the entire word before pressing Enter
+            while characters < 5:
                 inserted_char = stdscr.getkey()
-                if inserted_char not in list(string.ascii_lowercase) or inserted_char == '\n':
-                    i -= 1
-                else:
+                
+                if inserted_char == '\x1b': # If the player presses ESC then exit the game
+                    break
+                elif inserted_char == '\x7f' and characters > 0: # If the player presses Backspace then delete the last character
+                    characters -= 1
+                    void_guessed_word[characters] = "_"
+                    stdscr.addstr(1, 0, "Inserted word: " + ''.join(void_guessed_word))
+                    stdscr.refresh()
+                elif inserted_char in list(string.ascii_lowercase) and inserted_char != '\n':
                     characters += 1
                     void_guessed_word[characters - 1] = inserted_char
                     stdscr.addstr(1, 0, "Inserted word: " + ''.join(void_guessed_word))
                     stdscr.refresh()
-        
+            
+            if inserted_char == '\x1b':
+                break
+
             inserted_char = stdscr.getkey() # Now the player can press Enter
+            if inserted_char == '\x1b':
+                break
             while inserted_char != '\n':
                 inserted_char = stdscr.getkey()
+                if inserted_char == '\x1b':
+                    break
 
             void_guessed_word = ''.join(void_guessed_word) # Check if the guessed word is in the list of meaningful words
             if void_guessed_word not in meaningful_words:
@@ -96,14 +109,14 @@ class Wordle:
                 stdscr.addstr(6, 0, "Available letters: " + "".join(alphabet))
                 stdscr.refresh()
 
-                if guesses >= 0 and guessed_word == list(word_to_guess):
+                if guesses >= 0 and void_guessed_word == word_to_guess:
                     game_stopped = True
                     stdscr.clear()
                     stdscr.addstr(0, 0, "You won!.")
                     stdscr.refresh()
                     time.sleep(1)
                 
-                if guesses == 0 and guessed_word != list(word_to_guess):
+                if guesses == 0 and void_guessed_word != word_to_guess:
                     game_stopped = True
                     stdscr.clear()
                     stdscr.addstr(0, 0, "Game over! You ran out of guesses.")
