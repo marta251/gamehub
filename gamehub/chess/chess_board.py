@@ -31,7 +31,7 @@ class ChessBoard:
             return False
         if fen_split[1] != "w" and fen_split[1] != "b":
             return False
-        if len(fen_split[2]) > 4 or not all([c in "KQkq" for c in fen_split[2]]):
+        if len(fen_split[2]) > 4 or not all([c in "KQkq" for c in fen_split[2]]) and fen_split[2] != "-":
             return False
         if fen_split[3] != "-" and (len(fen_split[3]) != 2 or not fen_split[3][0].isalpha() or not fen_split[3][1].isdigit()):
             return False
