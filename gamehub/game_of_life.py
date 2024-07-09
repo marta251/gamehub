@@ -68,7 +68,7 @@ class GameOfLife:
 
         matrix = self.initialize_matrix(curses.LINES, curses.COLS//2, self.density)
         last_key = None
-        while last_key != '/x1b':
+        while last_key != '\x1b':
             stdscr.clear()
             self.draw_board(stdscr, matrix, COLOR_WHITE_WHITE)
             stdscr.refresh()

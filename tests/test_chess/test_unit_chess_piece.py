@@ -3,7 +3,7 @@ from gamehub.chess.chess_board import ChessBoard
 from collections import Counter
 
 
-class TestChessBoard:
+class TestChessPiece:
     
     @pytest.mark.parametrize("position, fen, expected",
                                 [((0, 0), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", []),
