@@ -32,6 +32,7 @@ class GameHub:
         wordle_parser = subparsers.add_parser("wordle", help="Play Wordle.")
         # Subparser for Chess
         chess_parser = subparsers.add_parser("chess", help="Play Chess.")
+        chess_parser.add_argument("--mode", type=str, default="Multiplayer", choices=["Singleplayer", "Multiplayer"], help="The mode of the game.")
 
         return parser.parse_args()
 
@@ -47,7 +48,7 @@ class GameHub:
         elif self.args.game == "wordle":
             game = wordle.Wordle()
         elif self.args.game == "chess":
-            game = chess.Chess()
+            game = chess.Chess(self.args.mode)
             
         if game is not None:
             game.init_game()

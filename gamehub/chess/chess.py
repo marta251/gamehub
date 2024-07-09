@@ -6,7 +6,8 @@ import time
 
 
 class Chess: 
-    def __init__(self):
+    def __init__(self, mode : str = "Multiplayer"):
+        self.mode = mode
         self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         self.players = ["w", "b"]
         self.current_player = self.players[0]
