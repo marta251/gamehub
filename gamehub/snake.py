@@ -7,9 +7,10 @@ import random
 class Snake:
     def __init__(self, difficulty="Medium") -> None:
         self.delta_time = None
-        if difficulty == "Easy":
+        self.difficulty = difficulty
+        if self.difficulty == "Easy":
             self.delta_time = 0.1
-        elif difficulty == "Medium":
+        elif self.difficulty == "Medium":
             self.delta_time = 0.05
         else:
             self.delta_time = 0.025
