@@ -59,7 +59,7 @@ class Snake:
         window.addstr(ROWS//2 + 1, COLS//2, "SCORE: " + str(score), curses.A_BLINK)
         window.addstr(ROWS//2 + 2, COLS//2, "Press enter to play again...", curses.A_BLINK)
         window.refresh()
-        time.sleep(1)
+        time.sleep(3)
 
     def new_food_coordinates(self, body : deque[tuple[int, int]], SNAKE_BOUNDS : int) -> tuple:
         y= random.randint(SNAKE_BOUNDS[0], SNAKE_BOUNDS[1])
@@ -84,6 +84,14 @@ class Snake:
             if body[len(body) - 1] == body[i]:
                 return True
         return False
+    
+    def check_terminal_size(self, min_lines : int, min_cols : int, window : object) -> bool:
+        if curses.COLS < min_cols or curses.LINES < min_lines:
+            window.addstr(0, 0, "Resize the terminal (" + str(min_cols) + "x" + str(min_lines) + ")", curses.A_BOLD)
+            window.refresh()
+            time.sleep(2)
+            return False
+        return True
 
 
     def gameloop(self, stdscr) -> None:
@@ -99,6 +107,8 @@ class Snake:
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_WHITE)
         COLOR_WHITE_WHITE = curses.color_pair(3)
 
+        if not self.check_terminal_size(15, 40, stdscr):
+            return
 
         LINES_MAIN_WINDOW = curses.LINES - 6
         if curses.COLS % 2 == 0:

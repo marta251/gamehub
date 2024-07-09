@@ -46,8 +46,19 @@ class Wordle:
             words = file.read().splitlines()
         return words
 
+    def check_terminal_size(self, min_lines : int, min_cols : int, window : object) -> bool:
+        if curses.COLS < min_cols or curses.LINES < min_lines:
+            window.addstr(0, 0, "Resize the terminal (" + str(min_cols) + "x" + str(min_lines) + ")", curses.A_BOLD)
+            window.refresh()
+            time.sleep(2)
+            return False
+        return True
+
     def gameloop(self, stdscr : object) -> None:
         curses.curs_set(0)
+
+        if not self.check_terminal_size(10, 40, stdscr):
+            return
 
         meaningful_words = self.generate_list_of_words()
         word_to_guess = random.choice(meaningful_words)

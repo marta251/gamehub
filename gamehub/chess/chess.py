@@ -132,6 +132,14 @@ class Chess:
         else:
             return None, None, False
         
+    def check_terminal_size(self, min_lines : int, min_cols : int, window : object) -> bool:
+        if curses.COLS < min_cols or curses.LINES < min_lines:
+            window.addstr(0, 0, "Resize the terminal (" + str(min_cols) + "x" + str(min_lines) + ")", curses.A_BOLD)
+            window.refresh()
+            time.sleep(2)
+            return False
+        return True
+        
     def from_input_to_board(self, x, y):
         if x != None and y != None and x//5 >= 0 and x//5 < 8 and y//3 >= 0 and y//3 < 8:
             return x//5, y//3
@@ -143,6 +151,9 @@ class Chess:
 
         COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
         
+        if not self.check_terminal_size(35, 40, stdscr):
+            return
+
         self.update_screen(stdscr, COLOR_WHITE_BLACK)
         
         while not self.checkmate and not self.stalemate:
