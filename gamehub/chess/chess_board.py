@@ -23,6 +23,16 @@ class ChessBoard:
         else:
             raise ValueError("Invalid arguments")
         
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, ChessBoard):
+            return False
+        return (self.matrix == value.matrix and
+                self.playerToMove == value.playerToMove and
+                self.castlingRights == value.castlingRights and
+                self.enPassant == value.enPassant and
+                self.halfMoveCounter == value.halfMoveCounter and
+                self.fullMoveCounter == value.fullMoveCounter)
+        
     def check_fen_validity(self, fen: str) -> bool:
         fen_split = fen.split(" ")
         if len(fen_split) != 6:

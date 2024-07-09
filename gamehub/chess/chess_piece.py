@@ -58,6 +58,13 @@ class ChessPiece:
 
     def __repr__(self) -> str:
         return f"ChessPiece(piece={self.piece}, color='{self.color}', position={self.position})"
+
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, ChessPiece):
+            return False
+        return (self.piece == value.piece and
+                self.color == value.color and
+                self.position == value.position)
     
 
     def is_enemy(self, piece: 'ChessPiece') -> bool:
