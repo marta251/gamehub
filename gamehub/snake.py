@@ -62,9 +62,9 @@ class Snake:
         window.addstr(ROWS//2 - 3, COLS//2 - 10, "GAME OVER", curses.A_BOLD)
         window.addstr(ROWS//2 - 2, COLS//2 - 10, "SCORE: " + str(self.score), curses.A_BOLD)
         window.addstr(ROWS//2 - 1, COLS//2 - 10, "HIGHSCORE: " + str(self.get_highscore()), curses.A_BOLD)
-        window.addstr(ROWS//2, COLS//2 - 10, "Press enter to play again...", curses.A_BLINK)
+        window.addstr(ROWS//2, COLS//2 - 10, "Press any key to play again...", curses.A_BLINK)
         window.refresh()
-        time.sleep(3)
+        time.sleep(1)
 
     def new_food_coordinates(self, body : deque[tuple[int, int]], SNAKE_BOUNDS : int) -> tuple:
         y= random.randint(SNAKE_BOUNDS[0], SNAKE_BOUNDS[1])
@@ -99,9 +99,12 @@ class Snake:
         
     def set_highscore(self) -> None:
         if self.score > self.highscore:
-            with open("/home/gamehub/files/snake_highscore.txt", "w") as file:
-                file.write(str(self.score))
-            self.highscore = self.score
+            try :
+                with open("/home/gamehub/files/snake_highscore.txt", "w") as file:
+                    file.write(str(self.score))
+                self.highscore = self.score
+            except:
+                pass
     
     def check_terminal_size(self, min_lines : int, min_cols : int, window : object) -> bool:
         if curses.COLS < min_cols or curses.LINES < min_lines:
@@ -128,8 +131,9 @@ class Snake:
             COLS_MAIN_WINDOW = curses.COLS - 11
 
         main_window = curses.newwin(LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, 3, 5)
-        score_window = curses.newwin(2, 12, 1, curses.COLS - 20)
+        score_window = curses.newwin(2, 12, 0, curses.COLS - 20)
 
+        stdscr.refresh()
 
         return curses.color_pair(1), curses.color_pair(2), curses.color_pair(3), LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, main_window, score_window
 
@@ -155,6 +159,11 @@ class Snake:
         except:
             key = None
         time.sleep(self.delta_time)
+        return key
+    
+    def get_input_end_game(self, stdscr) -> str:
+        stdscr.nodelay(False)
+        key = stdscr.getkey()
         return key
 
 
@@ -195,6 +204,11 @@ class Snake:
             self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food)
 
             last_key = self.get_input_and_delay(stdscr)   
+
+        if last_key != '\x1b' and self.get_input_end_game(stdscr) != '\x1b':
+            self.score = 0
+            self.init_game()
+            
 
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
