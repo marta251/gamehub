@@ -3,16 +3,18 @@ import curses
 from curses import wrapper
 from curses.textpad import rectangle
 import time
-
+from gamehub.chess.chess_engine import ChessEngine
 
 class Chess: 
     def __init__(self, mode : str = "Multiplayer"):
         self.mode = mode
-        self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+        #self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+        self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1") # Castling disabled
         self.players = ["w", "b"]
         self.current_player = self.players[0]
         self.turn = 1
         self.check, self.checkmate, self.stalemate = False, False, False
+        self.process = None
 
     def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
         if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
@@ -59,7 +61,10 @@ class Chess:
         
     def draw_debug_messages(self, window):
                 window.addstr(26, 0, "Fen: " + str(self.board.convert_board_to_fen()))
-                window.addstr(27, 0, "Player to Move: " + str(self.current_player))
+                if self.current_player == "w":
+                    window.addstr(27, 0, "Player to Move: White")
+                else:
+                    window.addstr(27, 0, "Player to Move: Black")
                 window.addstr(28, 0, "Check: " + str(self.check))
                 window.addstr(29, 0, "Checkmate: " + str(self.checkmate))
                 window.addstr(30, 0, "Stalemate: " + str(self.stalemate))
@@ -146,8 +151,7 @@ class Chess:
         else:
             return None, None
     
-    
-    def gameloop(self, stdscr) -> None:
+    def multiplayer_gameloop(self, stdscr) -> None:
 
         COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
         
@@ -162,7 +166,7 @@ class Chess:
             if exit:
                 break
             x_start, y_start = self.from_input_to_board(x1, y1)
-
+                
             # Check if the cursor is on a piece, and if it's the current player's piece
             if x_start is not None and y_start is not None and self.board.matrix[y_start][x_start] != None and self.board.matrix[y_start][x_start].color == self.current_player:
                 possible = self.board.matrix[y_start][x_start].legal_moves(self.board.matrix)
@@ -199,5 +203,73 @@ class Chess:
             self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
 
 
+    def single_player_gameloop(self, stdscr) -> None:
+
+        COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
+        
+        if not self.check_terminal_size(35, 40, stdscr):
+            return
+
+        self.update_screen(stdscr, COLOR_WHITE_BLACK)
+
+        engine = ChessEngine()
+
+
+        while not self.checkmate and not self.stalemate:
+            # Selecting the piece to move
+            if self.current_player == "w":
+                x1, y1, exit = self.get_input(stdscr)
+                if exit:
+                    break
+                x_start, y_start = self.from_input_to_board(x1, y1)
+            else:
+                x_start, y_start, x_end, y_end = engine.get_move(self.board.convert_board_to_fen())
+                stdscr.addstr(32, 0, "Engine move: " + str((x_start, y_start, x_end, y_end)))
+                stdscr.refresh()   
+
+            # Check if the cursor is on a piece, and if it's the current player's piece
+            if x_start is not None and y_start is not None and self.board.matrix[y_start][x_start] != None and self.board.matrix[y_start][x_start].color == self.current_player:
+                possible = self.board.matrix[y_start][x_start].legal_moves(self.board.matrix)
+                if not self.check and self.current_player == "w":
+                    self.update_screen(stdscr, COLOR_WHITE_BLACK, possible, COLOR_GREEN_BLACK)
+                elif self.current_player == "w":
+                    self.update_screen(stdscr, COLOR_WHITE_BLACK, possible, COLOR_GREEN_BLACK, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
+
+                # Selecting the destination
+                if self.current_player == "w":
+                    x2, y2, exit = self.get_input(stdscr)
+                    if exit:
+                        break
+                    x_end, y_end = self.from_input_to_board(x2, y2)
+                if (x_end, y_end) in possible:
+                    self.move_piece((x_start, y_start), (x_end, y_end))
+                    self.current_player = self.players[(self.turn) % 2]
+                    self.turn += 1
+                    self.board.playerToMove = self.current_player
+                    self.board.fullMoveCounter = self.turn
+                    self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
+
+                    if not self.check:
+                        self.update_screen(stdscr, COLOR_WHITE_BLACK)
+                    else:
+                        self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
+                    
+                else:
+                    if not self.check:
+                        self.update_screen(stdscr, COLOR_WHITE_BLACK)
+                    else:
+                        self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
+
+        if self.checkmate or self.stalemate:
+            self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
+
+        engine.close()
+
+
+
     def init_game(self) -> None:
-        wrapper(self.gameloop)  # Call the function via wrapper
+        if self.mode == "Singleplayer":
+            wrapper(self.single_player_gameloop)
+        elif self.mode == "Multiplayer":
+            wrapper(self.multiplayer_gameloop)
+
