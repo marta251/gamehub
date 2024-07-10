@@ -15,6 +15,9 @@ class Snake:
         else:
             self.delta_time = 0.025
 
+        self.score = 0
+        self.highscore = self.get_highscore()
+
     def calcule_new_position(self, y : int, x : int, direction : str, SNAKE_BOUNDS : tuple[int, int, int, int]) -> tuple[int, int]:
         if direction == "UP":
             if y > SNAKE_BOUNDS[0]:
@@ -55,10 +58,11 @@ class Snake:
             window.addstr(i, COLS - 2, " ", color)
         
 
-    def draw_game_over(self, window, ROWS : int, COLS : int, score : int) -> None:
-        window.addstr(ROWS//2, COLS//2, "GAME OVER", curses.A_BOLD)
-        window.addstr(ROWS//2 + 1, COLS//2, "SCORE: " + str(score), curses.A_BLINK)
-        window.addstr(ROWS//2 + 2, COLS//2, "Press enter to play again...", curses.A_BLINK)
+    def draw_game_over(self, window, ROWS : int, COLS : int) -> None:
+        window.addstr(ROWS//2 - 3, COLS//2 - 10, "GAME OVER", curses.A_BOLD)
+        window.addstr(ROWS//2 - 2, COLS//2 - 10, "SCORE: " + str(self.score), curses.A_BOLD)
+        window.addstr(ROWS//2 - 1, COLS//2 - 10, "HIGHSCORE: " + str(self.get_highscore()), curses.A_BOLD)
+        window.addstr(ROWS//2, COLS//2 - 10, "Press enter to play again...", curses.A_BLINK)
         window.refresh()
         time.sleep(3)
 
@@ -86,6 +90,19 @@ class Snake:
                 return True
         return False
     
+    def get_highscore(self) -> int:
+        try:
+            with open("snake_highscore.txt", "r") as file:
+                return int(file.read())
+        except:
+            return 0
+        
+    def set_highscore(self) -> None:
+        if self.score > self.highscore:
+            with open("snake_highscore.txt", "w") as file:
+                file.write(str(self.score))
+            self.highscore = self.score
+    
     def check_terminal_size(self, min_lines : int, min_cols : int, window : object) -> bool:
         if curses.COLS < min_cols or curses.LINES < min_lines:
             window.addstr(0, 0, "Resize the terminal (" + str(min_cols) + "x" + str(min_lines) + ")", curses.A_BOLD)
@@ -111,25 +128,34 @@ class Snake:
             COLS_MAIN_WINDOW = curses.COLS - 11
 
         main_window = curses.newwin(LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, 3, 5)
-        score_window = curses.newwin(1, 12, 1, curses.COLS - 20)
+        score_window = curses.newwin(2, 12, 1, curses.COLS - 20)
 
 
         return curses.color_pair(1), curses.color_pair(2), curses.color_pair(3), LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, main_window, score_window
 
-    def update_main_window(self, main_window, color_border, color_snake, color_food, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, game_over=False, score = 0) -> None:
+    def update_main_window(self, main_window, color_border, color_snake, color_food, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, game_over=False) -> None:
         main_window.clear()
         main_window.border(color_border, color_border, color_border, color_border, color_border, color_border, color_border, color_border)
         self.draw_thick_border(main_window, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, color_border)
         self.draw_snake(main_window, body, color_snake)
         self.draw_food(main_window, y_food, x_food, color_food)
         if game_over:
-            self.draw_game_over(main_window, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, 0)
+            self.draw_game_over(main_window, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW)
         main_window.refresh()
     
-    def update_score_window(self, score_window, score : int) -> None:
+    def update_score_window(self, score_window) -> None:
         score_window.clear()
-        score_window.addstr(0, 0, "Score: " + str(score))
+        score_window.addstr(0, 0, "Score: " + str(self.score))
+        score_window.addstr(1, 0, "Best: " + str(self.highscore))
         score_window.refresh()
+
+    def get_input_and_delay(self, stdscr) -> str:
+        try:
+            key = stdscr.getkey()
+        except:
+            key = None
+        time.sleep(self.delta_time)
+        return key
 
 
     def gameloop(self, stdscr) -> None:
@@ -141,26 +167,26 @@ class Snake:
 
         SNAKE_BOUNDS = (1, LINES_MAIN_WINDOW - 2, 2, COLS_MAIN_WINDOW - 4) # (y1,y2,x1,x2) : snake can't get out of this bounds (but it can walk over this bounds)
 
-        score = 0
         # Initial snake
         body = deque([(2,4)])
         direction = "RIGHT"
         last_key = "KEY_RIGHT"
 
         y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
-        self.update_score_window(score_window, score)   
+        self.update_score_window(score_window)   
         while last_key != '\x1b':
 
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, SNAKE_BOUNDS)
             body.append((y, x))
             if self.verify_collision(body):
-                self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, True, score)
+                self.set_highscore()
+                self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, True)
                 break
             if self.check_food_eaten(body, y_food, x_food):
                 body.append((y, x))
                 y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
-                score += 1
-                self.update_score_window(score_window, score)
+                self.score += 1
+                self.update_score_window(score_window)
             else:
                 body.popleft()
 
@@ -168,12 +194,7 @@ class Snake:
 
             self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food)
 
-            try:
-                last_key = stdscr.getkey()
-            except:
-                last_key = None
-
-            time.sleep(self.delta_time)
+            last_key = self.get_input_and_delay(stdscr)   
 
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper
