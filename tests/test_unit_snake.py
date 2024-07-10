@@ -125,3 +125,25 @@ class TestSnake:
             
         return a, b
         '''
+    
+    def test_gameloop(self, monkeypatch):
+
+        def food_coordinates_factory(self):
+            return (2, 7)
+        def setup_curses(self):
+            return (None, None, None, 30, 60, None, None)
+
+        # Mock all the gameloop methods related to curses to avoid the need of a terminal
+        monkeypatch.setattr(Snake, "check_terminal_size", lambda n: True)
+        monkeypatch.setattr(Snake, "set_up_curses", setup_curses)
+        monkeypatch.setattr(Snake, "update_main_window", lambda n: None)
+        monkeypatch.setattr(Snake, "update_score_window", lambda n: None)
+        monkeypatch.setattr(Snake, "get_input_end_game", lambda n: '\x1b')
+        monkeypatch.setattr(Snake, "set_highscore", lambda n: None)
+        monkeypatch.setattr(Snake, "get_highscore", lambda n: 0)
+
+        monkeypatch.setattr(Snake, "get_input_and_delay", lambda n: "KEY_RIGHT")
+
+        s = Snake()
+        s.gameloop(None)
+        assert s.score == 1
