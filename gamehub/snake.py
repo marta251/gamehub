@@ -92,14 +92,14 @@ class Snake:
     
     def get_highscore(self) -> int:
         try:
-            with open("snake_highscore.txt", "r") as file:
+            with open("/home/gamehub/files/snake_highscore.txt", "r") as file:
                 return int(file.read())
         except:
             return 0
         
     def set_highscore(self) -> None:
         if self.score > self.highscore:
-            with open("snake_highscore.txt", "w") as file:
+            with open("/home/gamehub/files/snake_highscore.txt", "w") as file:
                 file.write(str(self.score))
             self.highscore = self.score
     
