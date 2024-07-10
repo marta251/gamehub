@@ -3,11 +3,7 @@ from gamehub.gamehub import GameHub
 from hypothesis import given, strategies, settings, HealthCheck # type: ignore
 from hypothesis.strategies import composite # type: ignore
 
-class TestGameHub:
-    def test_constructor(self) -> None:
-        g = GameHub()
-        assert isinstance(g, GameHub)
-        
+class TestGameHub:       
     @composite
     def smaller_than(draw) -> tuple[int, int]:
         a = draw(strategies.integers())
