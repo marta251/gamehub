@@ -8,10 +8,12 @@ class ChessPiece:
         # if the piece is uppercase it is white, otherwise it is black
         self.piece_char = piece_char
         
-        if piece_char.isupper():
+        if piece_char in ['P', 'R', 'N', 'B', 'Q', 'K']:
             self.color = 'w'
-        else:
+        elif piece_char in ['p', 'r', 'n', 'b', 'q', 'k']:
             self.color = 'b'
+        else:
+            raise ValueError("Invalid piece character")
         
         # set the piece type and the piece symbol
         if piece_char == 'P':
@@ -53,8 +55,10 @@ class ChessPiece:
         else:
             raise ValueError("Invalid piece")
 
-
-        self.position = position
+        if position[0] >= 0 and position[0] < 8 and position[1] >= 0 and position[1] < 8:
+            self.position = position
+        else:
+            raise ValueError("Invalid position")
 
     def __repr__(self) -> str:
         return f"ChessPiece(piece={self.piece}, color='{self.color}', position={self.position})"
@@ -70,13 +74,6 @@ class ChessPiece:
     def is_enemy(self, piece: 'ChessPiece') -> bool:
         return self.color != piece.color
     
-
-    def opposite_color_pieces(self) -> list['ChessPiece']:
-        if self.color == 'b':
-            return ['P', 'R', 'N', 'B', 'Q', 'K']
-        else:
-            return ['p', 'r', 'n', 'b', 'q', 'k']
-
 
     def legal_moves(self, matrix : list[list['ChessPiece']], check_king_under_attack=True) -> list[tuple[int, int]]:
         #if is not pinned and not under check

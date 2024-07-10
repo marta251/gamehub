@@ -30,6 +30,7 @@ class GameHub:
 
         # Subparser for Wordle
         wordle_parser = subparsers.add_parser("wordle", help="Play Wordle.")
+        
         # Subparser for Chess
         chess_parser = subparsers.add_parser("chess", help="Play Chess.")
         chess_parser.add_argument("--mode", type=str, default="Multiplayer", choices=["Singleplayer", "Multiplayer"], help="The mode of the game.")
