@@ -1,16 +1,26 @@
 import pytest # type: ignore
-import gamehub.game_of_life as game_of_life
+from gamehub.game_of_life import GameOfLife
 from hypothesis import given, strategies, settings # type: ignore
 
 class TestGameOfLife:
+    def test_constructor_default(self) -> None:
+        g = GameOfLife()
+        assert g.speed == 100 and g.mode == "Automatic" and g.density == 30
+    
+    @given(strategies.integers(min_value=50, max_value=1000))
+    @settings(max_examples=5)
+    def test_constructor_delta_time(self, speed : int) -> None:
+        g = GameOfLife(speed)
+        assert g.delta_time == speed / 1000
+
     @given(
         strategies.integers(min_value=3, max_value=20),
         strategies.integers(min_value=3, max_value=20)
         )
     @settings(max_examples=5)
     def test_initialize_matrix_dimension(self, rows : int, cols : int) -> None:
-        g = game_of_life.GameOfLife()
-        matrix =  g.initialize_matrix(rows, cols, 10)
+        g = GameOfLife()
+        matrix = g.initialize_matrix(rows, cols, 10)
         assert len(matrix) == rows and len(matrix[0]) == cols
         
     @given(
@@ -19,11 +29,10 @@ class TestGameOfLife:
         )
     @settings(max_examples=5)
     def test_initialize_matrix_values(self, rows : int, cols : int) -> None:
-        g = game_of_life.GameOfLife()
+        g = GameOfLife()
         matrix =  g.initialize_matrix(rows, cols, 10)
         all_ones_or_zeros = all([elem == 0 or elem == 1 for row in matrix for elem in row])
         assert all_ones_or_zeros
-
 
     @pytest.mark.parametrize("matrix, expected",
                                 [([[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]),
@@ -32,9 +41,8 @@ class TestGameOfLife:
                                 ([[0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, 0]], [[0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, 0]])])
                              
     def test_update_matrix (self, matrix : list[list[int]], expected : list[list[int]]) -> None:
-        g = game_of_life.GameOfLife()
+        g = GameOfLife()
         assert g.update_matrix(matrix) == expected
-
 
     @given(
         strategies.lists(
@@ -45,7 +53,7 @@ class TestGameOfLife:
         )
     @settings(max_examples=5)
     def test_update_matrix_dimension(self, matrix : list[list[int]]) -> None:
-        g = game_of_life.GameOfLife()
+        g = GameOfLife()
         new_matrix =  g.update_matrix(matrix)
         assert len(new_matrix) == len(matrix) and len(new_matrix[0]) == len(matrix[0])
         
@@ -58,7 +66,7 @@ class TestGameOfLife:
         )
     @settings(max_examples=5)
     def test_update_matrix_values(self, matrix : list[list[int]]) -> None:
-        g = game_of_life.GameOfLife()
+        g = GameOfLife()
         new_matrix =  g.update_matrix(matrix)        
         all_ones_or_zeros = all([elem == 0 or elem == 1 for row in new_matrix for elem in row])
         assert all_ones_or_zeros
@@ -72,7 +80,7 @@ class TestGameOfLife:
                                 ([[0, 1, 1], [1, 0, 1], [0, 1, 0]], 1, 1, 5)                                  
                                 ])                            
     def test_count_live_neighbors(self, matrix : list[list[int]], row : int, col : int, expected : int) -> None:
-        g = game_of_life.GameOfLife()
+        g = GameOfLife()
         assert g.count_live_neighbors(matrix, row, col) == expected
 
     @given(
@@ -86,6 +94,6 @@ class TestGameOfLife:
         )
     @settings(max_examples=5)
     def test_count_live_neighbors_bounds(self, matrix : list[list[int]], row : int, col : int) -> None:
-        g = game_of_life.GameOfLife()
+        g = GameOfLife()
         count = g.count_live_neighbors(matrix, row, col)
         assert count >= 0 and count <= 8

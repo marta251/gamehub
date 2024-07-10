@@ -52,8 +52,6 @@ class TestChessBoard:
                 board.halfMoveCounter == expected[4] and
                 board.fullMoveCounter == expected[5])
         
-    
-        
     @pytest.mark.parametrize("expected, board",
                                 [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
                                 ([[ChessPiece('r', (0, 0)), ChessPiece('n', (1, 0)), ChessPiece('b', (2, 0)), ChessPiece('q', (3, 0)), ChessPiece('k', (4, 0)), ChessPiece('b', (5, 0)), ChessPiece('n', (6, 0)), ChessPiece('r', (7, 0))],
