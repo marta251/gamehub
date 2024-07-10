@@ -36,10 +36,8 @@ class ChessEngine:
                 break
         return self.convert_algebraic_to_coordinates(best_move)
     
-    
     def convert_algebraic_to_coordinates(self, algebraic: str) -> tuple[int, int, int, int]:
         return ord(algebraic[0]) - 97, 8 - int(algebraic[1]), ord(algebraic[2]) - 97, 8 - int(algebraic[3])
-    
     
     def close(self) -> None:
         self.process.stdin.write('quit\n')

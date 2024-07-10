@@ -1,11 +1,9 @@
-import pytest 
+import pytest  # type: ignore
 from gamehub.chess.chess_board import ChessBoard
 from gamehub.chess.chess_piece import ChessPiece
 from collections import Counter
 
-
 class TestChessPiece:
-
     #I define the matrix without using the ChessBoard class since I'm unit testing the ChessPiece class
     def chess_piece_matrix_factory(self) -> list[list[ChessPiece]]:
         # Magnus Carlsen vs Hikaru Nakamura 

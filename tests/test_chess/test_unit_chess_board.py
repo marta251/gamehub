@@ -1,9 +1,8 @@
-import pytest
+import pytest  # type: ignore
 from gamehub.chess.chess_board import ChessBoard
 from gamehub.chess.chess_piece import ChessPiece
 
 class TestChessBoard:
-
     @pytest.mark.parametrize("fen, expected",
                                 [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
                                 ([[ChessPiece('r', (0, 0)), ChessPiece('n', (1, 0)), ChessPiece('b', (2, 0)), ChessPiece('q', (3, 0)), ChessPiece('k', (4, 0)), ChessPiece('b', (5, 0)), ChessPiece('n', (6, 0)), ChessPiece('r', (7, 0))],

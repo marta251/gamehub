@@ -1,9 +1,7 @@
 import copy
 
 class ChessPiece:
-
     #TODO: arroccamento, en passant, promozione
-
     def __init__(self, piece_char: str, position: tuple[int, int]) -> None:
         # if the piece is uppercase it is white, otherwise it is black
         self.piece_char = piece_char
@@ -73,7 +71,6 @@ class ChessPiece:
 
     def is_enemy(self, piece: 'ChessPiece') -> bool:
         return self.color != piece.color
-    
 
     def legal_moves(self, matrix : list[list['ChessPiece']], check_king_under_attack=True) -> list[tuple[int, int]]:
         #if is not pinned and not under check
@@ -104,7 +101,6 @@ class ChessPiece:
                     moves.remove(move)
         return moves
             
-
     def rook_moves(self, matrix : list[list['ChessPiece']]) -> list[tuple[int, int]]:
         moves = []
         #horizontal
@@ -211,7 +207,6 @@ class ChessPiece:
                 break
         return moves
     
-    
     def knight_moves(self, matrix : list[list['ChessPiece']]) -> list[tuple[int, int]]:
         moves = []
         x = self.position[0]
@@ -269,7 +264,6 @@ class ChessPiece:
                 moves.append((x-1, y-1))
         return moves
     
-    
     def king_moves(self, matrix : list[list['ChessPiece']]) -> list[tuple[int, int]]:
         moves = []
         x = self.position[0]
@@ -291,7 +285,6 @@ class ChessPiece:
         if x - 1 >= 0 and y - 1 >= 0 and (matrix[y-1][x-1] == None or matrix[y-1][x-1].is_enemy(self)):
             moves.append((x-1, y-1))
         return moves
-    
     
     # check if the king of my color is under attack
     def king_under_attack(self, matrix : list[list['ChessPiece']]) -> bool:

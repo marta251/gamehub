@@ -4,7 +4,6 @@ import gamehub.snake as snake
 from hypothesis import given, strategies, settings # type: ignore
 from hypothesis.strategies import composite, integers # type: ignore
 
-
 class TestSnake:
     @pytest.mark.parametrize("key, current_direction, expected",
                              [("KEY_UP", "DOWN", "DOWN"),

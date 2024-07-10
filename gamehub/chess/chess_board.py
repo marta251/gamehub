@@ -1,6 +1,5 @@
 from gamehub.chess.chess_piece import ChessPiece
 class ChessBoard:
-
     # Generates a chess board from a FEN string or from a matrix and other parameters
     def __init__(self, fen=None, matrix=None, playerToMove=None, castlingRights=None, enPassant=None, halfMoveCounter=None, fullMoveCounter=None) -> None:
         if fen is not None:

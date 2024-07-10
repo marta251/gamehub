@@ -202,7 +202,6 @@ class Chess:
         if self.checkmate or self.stalemate:
             self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
 
-
     def single_player_gameloop(self, stdscr) -> None:
 
         COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
@@ -265,11 +264,8 @@ class Chess:
 
         engine.close()
 
-
-
     def init_game(self) -> None:
         if self.mode == "Singleplayer":
             wrapper(self.single_player_gameloop)
         elif self.mode == "Multiplayer":
             wrapper(self.multiplayer_gameloop)
-
