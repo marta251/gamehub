@@ -57,7 +57,6 @@ class Snake:
             window.addstr(i, 1, " ", color)
             window.addstr(i, COLS - 2, " ", color)
         
-
     def draw_game_over(self, window, ROWS : int, COLS : int) -> None:
         window.addstr(ROWS//2 - 3, COLS//2 - 10, "GAME OVER", curses.A_BOLD)
         window.addstr(ROWS//2 - 2, COLS//2 - 10, "SCORE: " + str(self.score), curses.A_BOLD)
@@ -200,9 +199,7 @@ class Snake:
                 body.popleft()
 
             direction = self.calcule_direction(direction, last_key)
-
             self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food)
-
             last_key = self.get_input_and_delay(stdscr)   
 
         if last_key != '\x1b' and self.get_input_end_game(stdscr) != '\x1b':

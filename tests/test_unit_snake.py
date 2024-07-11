@@ -106,7 +106,7 @@ class TestSnake:
 
 
     # To test the gameloop we consider the folloging scenario: 
-    # The user always presses the right key, 3 food items are spawned on it's path (same row, different columns)
+    # The user always presses the right key, 3 food items are spawned on its path (same row, different columns)
     # A fourth food item is spawned on a different row (not on the snake's path).
     # The game should end when the snake collides with the right wall.
     # If everything goes as expected, the score should be 3.
