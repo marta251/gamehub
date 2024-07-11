@@ -6,15 +6,16 @@ import time
 from gamehub.chess.chess_engine import ChessEngine
 
 class Chess: 
-    def __init__(self, mode : str = "Multiplayer"):
+    def __init__(self, mode : str = "Multiplayer", fen : str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"): # Castling disabled by default (when implemented, change to "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         self.mode = mode
-        #self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-        self.board = ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1") # Castling disabled
+        self.board = ChessBoard(fen) 
         self.players = ["w", "b"]
-        self.current_player = self.players[0]
-        self.turn = 1
-        self.check, self.checkmate, self.stalemate = False, False, False
-        self.process = None
+        if self.board.playerToMove == "w":
+            self.current_player = self.players[0]
+        else:
+            self.current_player = self.players[1]
+        self.turn = self.board.fullMoveCounter
+        self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
 
     def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
         if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
