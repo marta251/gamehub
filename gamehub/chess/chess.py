@@ -52,7 +52,6 @@ class Chess:
         curses.curs_set(0)  # Hide cursor
         curses.mousemask(1) # Enable mouse events
 
-        # Define colors
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -69,7 +68,6 @@ class Chess:
                 window.addstr(30, 0, "Stalemate: " + str(self.stalemate))
 
     def draw_board(self, window, color, moves=None, moves_color=None, check_visualization=False, check_color=None, king_coordinates=None) -> None:
-
         char_matrix = self.board.matrix
 
         window.clear()
@@ -151,7 +149,6 @@ class Chess:
             return None, None
     
     def multiplayer_gameloop(self, stdscr) -> None:
-
         COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
         
         if not self.check_terminal_size(35, 40, stdscr):
@@ -191,7 +188,6 @@ class Chess:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
                     else:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
-                    
                 else:
                     if not self.check:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
@@ -202,7 +198,6 @@ class Chess:
             self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player), True)
 
     def single_player_gameloop(self, stdscr) -> None:
-
         COLOR_WHITE_BLACK, COLOR_GREEN_BLACK, COLOR_RED_BLACK = self.init_curses()
         
         if not self.check_terminal_size(35, 40, stdscr):
@@ -211,7 +206,6 @@ class Chess:
         self.update_screen(stdscr, COLOR_WHITE_BLACK)
 
         engine = ChessEngine()
-
 
         while not self.checkmate and not self.stalemate:
             # Selecting the piece to move
@@ -250,8 +244,7 @@ class Chess:
                     if not self.check:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
                     else:
-                        self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))
-                    
+                        self.update_screen(stdscr, COLOR_WHITE_BLACK, None, None, True, COLOR_RED_BLACK, self.board.detect_king_coordinates(self.current_player))  
                 else:
                     if not self.check:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
