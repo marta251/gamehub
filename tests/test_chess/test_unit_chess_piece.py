@@ -1,5 +1,4 @@
 import pytest  # type: ignore
-from gamehub.chess.chess_board import ChessBoard
 from gamehub.chess.chess_piece import ChessPiece
 from collections import Counter
 

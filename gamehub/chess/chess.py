@@ -1,4 +1,4 @@
-import gamehub.chess.chess_board as chess_board
+from gamehub.chess.chess_board import ChessBoard
 import curses
 from curses import wrapper
 from curses.textpad import rectangle
@@ -9,7 +9,7 @@ class Chess:
     def __init__(self, mode : str = "Multiplayer"):
         self.mode = mode
         #self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-        self.board = chess_board.ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1") # Castling disabled
+        self.board = ChessBoard( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1") # Castling disabled
         self.players = ["w", "b"]
         self.current_player = self.players[0]
         self.turn = 1
@@ -25,13 +25,13 @@ class Chess:
                 self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
                 self.board.matrix[start[1]][start[0]] = None
             
-    def get_all_possible_moves(self):
-        all_possible_moves = []
+    def get_all_possible_moves_count(self):
+        all_possible_moves_count = 0
         for i in range(8):
             for j in range(8):
                 if self.board.matrix[i][j] != None and self.board.matrix[i][j].color == self.current_player:
-                    all_possible_moves = all_possible_moves + self.board.matrix[i][j].legal_moves(self.board.matrix)
-        return all_possible_moves
+                    all_possible_moves_count = all_possible_moves_count + len(self.board.matrix[i][j].legal_moves(self.board.matrix))
+        return all_possible_moves_count
     
     def detect_check_checkmate_stalemate(self):
         check, checkmate, stalemate = False, False, False
@@ -39,12 +39,10 @@ class Chess:
         king_position = self.board.detect_king_coordinates(self.current_player)
         if matrix[king_position[1]][king_position[0]].king_under_attack(matrix):
             check = True
-            all_possible_moves = self.get_all_possible_moves()
-            if len(all_possible_moves) == 0:
+            if self.get_all_possible_moves_count() == 0:
                 checkmate = True
         else:
-            all_possible_moves = self.get_all_possible_moves()
-            if len(all_possible_moves) == 0:
+            if self.get_all_possible_moves_count() == 0:
                 stalemate = True
 
         return check, checkmate, stalemate
