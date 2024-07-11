@@ -104,13 +104,12 @@ class TestSnake:
         s = Snake()
         assert s.verify_collision(body) == expected
 
-
     # To test the gameloop we consider the folloging scenario: 
     # The user always presses the right key, 3 food items are spawned on its path (same row, different columns)
     # A fourth food item is spawned on a different row (not on the snake's path).
     # The game should end when the snake collides with the right wall.
     # If everything goes as expected, the score should be 3.
-    def test_gameloop_1(self, monkeypatch):
+    def test_gameloop(self, monkeypatch):
 
         def food_coordinates_factory():
             coordinates = [(2, 8), (2, 12), (2, 16), (5, 6)]
