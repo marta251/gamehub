@@ -18,13 +18,14 @@ class Chess:
         self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
 
     def move_piece(self, start : tuple[int, int], end :tuple[int, int]) -> None:
-        if start[0] >= 0 and start[0] < 8 and start[1] >= 0 and start[1] < 8 and end[0] >= 0 and end[0] < 8 and end[1] >= 0 and end[1] < 8 and self.board.matrix[start[1]][start[0]] != None:
-            piece_to_move = self.board.matrix[start[1]][start[0]]
-            possible_moves = piece_to_move.legal_moves(self.board.matrix)
-            if end in possible_moves:
-                piece_to_move.position = end
-                self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
-                self.board.matrix[start[1]][start[0]] = None
+        piece_to_move = self.board.matrix[start[1]][start[0]]
+        piece_to_move.position = end
+        self.board.matrix[end[1]][end[0]] = self.board.matrix[start[1]][start[0]]
+        self.board.matrix[start[1]][start[0]] = None
+        self.current_player = self.players[(self.turn) % 2]
+        self.turn += 1
+        self.board.playerToMove = self.current_player
+        self.board.fullMoveCounter = self.turn
             
     def get_all_possible_moves_count(self):
         all_possible_moves_count = 0
@@ -178,10 +179,6 @@ class Chess:
                 x_end, y_end = self.from_input_to_board(x2, y2)
                 if (x_end, y_end) in possible:
                     self.move_piece((x_start, y_start), (x_end, y_end))
-                    self.current_player = self.players[(self.turn) % 2]
-                    self.turn += 1
-                    self.board.playerToMove = self.current_player
-                    self.board.fullMoveCounter = self.turn
                     self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
 
                     if not self.check:
