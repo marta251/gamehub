@@ -104,46 +104,40 @@ class TestSnake:
         s = Snake()
         assert s.verify_collision(body) == expected
 
-    #TODO: Try property based testing for verify_collision (the last element of the snake should not be in the rest of the snake)
-    '''
-    @composite
-    def random_snake(draw):
-        a = draw(integers(min_value=0, max_value=100))
-        b = draw(integers(min_value=0, max_value=100)) * 2
-        snake = [(a,b)]
-        while len(snake) < 5:
-            rand = random.randint(0, 3)
-            if rand == 0:
-                a -= 1
-            elif rand == 1:
-                a += 1
-            elif rand == 2:
-                b -= 2
-            else:
-                b += 2
-            snake.append((a,b))
-            
-        return a, b
-        '''
-    
-    def test_gameloop(self, monkeypatch):
 
-        def food_coordinates_factory(self):
-            return (2, 7)
-        def setup_curses(self):
+    # To test the gameloop we consider the folloging scenario: 
+    # The user always presses the right key, 3 food items are spawned on it's path (same row, different columns)
+    # A fourth food item is spawned on a different row (not on the snake's path).
+    # The game should end when the snake collides with the right wall.
+    # If everything goes as expected, the score should be 3.
+    def test_gameloop_1(self, monkeypatch):
+
+        def food_coordinates_factory():
+            coordinates = [(2, 8), (2, 12), (2, 16), (5, 6)]
+            for coord in coordinates:
+                yield coord
+
+        food_coords_gen = food_coordinates_factory()
+    
+        def get_next_food_coordinates(self, *args):
+            return next(food_coords_gen)
+        
+        def setup_curses(self, *args):
             return (None, None, None, 30, 60, None, None)
 
         # Mock all the gameloop methods related to curses to avoid the need of a terminal
-        monkeypatch.setattr(Snake, "check_terminal_size", lambda n: True)
+        monkeypatch.setattr(Snake, "check_terminal_size", lambda *args: True)
         monkeypatch.setattr(Snake, "set_up_curses", setup_curses)
-        monkeypatch.setattr(Snake, "update_main_window", lambda n: None)
-        monkeypatch.setattr(Snake, "update_score_window", lambda n: None)
-        monkeypatch.setattr(Snake, "get_input_end_game", lambda n: '\x1b')
-        monkeypatch.setattr(Snake, "set_highscore", lambda n: None)
-        monkeypatch.setattr(Snake, "get_highscore", lambda n: 0)
+        monkeypatch.setattr(Snake, "update_main_window", lambda *args: None)
+        monkeypatch.setattr(Snake, "update_score_window", lambda *args: None)
+        monkeypatch.setattr(Snake, "get_input_end_game", lambda *args: '\x1b')
+        monkeypatch.setattr(Snake, "set_highscore", lambda *args: None)
+        monkeypatch.setattr(Snake, "get_highscore", lambda *args: 0)
 
-        monkeypatch.setattr(Snake, "get_input_and_delay", lambda n: "KEY_RIGHT")
+        # Mock the input method to always return KEY_RIGHT
+        monkeypatch.setattr(Snake, "get_input_and_delay", lambda *args: "KEY_RIGHT")
+        monkeypatch.setattr(Snake, "new_food_coordinates", get_next_food_coordinates)
 
         s = Snake()
         s.gameloop(None)
-        assert s.score == 1
+        assert s.score == 3
