@@ -18,6 +18,3 @@ class TestWordle:
     def test_generate_updated_guess(self, new_guessed : str, to_guess : str, alphabet : list, old_guessed : str, expected : tuple) -> None:
         w = Wordle()
         assert w.generate_updated_guess(new_guessed, to_guess, alphabet, old_guessed) == expected
-
-    def test_gameloop():
-        pass
