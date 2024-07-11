@@ -20,6 +20,7 @@ class TestWordle:
         w = Wordle()
         assert w.generate_updated_guess(new_guessed, to_guess, alphabet, old_guessed) == expected
 
+    # With the following test we are going to test the gameloop when the user just wins immediately
     def test_gameloop(self, monkeypatch) -> None:
         def mock_inizialize_game(*args):
             return ["think", "apple", "about"], "think", ["_", "_", "_", "_", "_"], 6, list(string.ascii_lowercase), False
