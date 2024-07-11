@@ -97,3 +97,30 @@ class TestGameOfLife:
         g = GameOfLife()
         count = g.count_live_neighbors(matrix, row, col)
         assert count >= 0 and count <= 8
+
+
+
+    def test_gameloop(self, monkeypatch) -> None:
+
+        def mock_get_input_and_sleep(self, *args):
+            return "\x1b"
+        
+        def mock_initialize_matrix(self, *args):
+            return [[0, 0, 0], 
+                    [0, 0, 0], 
+                    [0, 0, 0]]
+        
+        def mock_init_curse(self, *args):
+            return None, 3, 6
+
+        monkeypatch.setattr(GameOfLife, "get_input_and_sleep", mock_get_input_and_sleep)
+        monkeypatch.setattr(GameOfLife, "init_curses", mock_init_curse)
+        monkeypatch.setattr(GameOfLife, "draw_board", lambda *args: None)
+        monkeypatch.setattr(GameOfLife, "initialize_matrix", mock_initialize_matrix)
+
+        g = GameOfLife()
+        g.gameloop(None)
+
+        assert g.matrix == [[0, 0, 0], 
+                            [0, 0, 0], 
+                            [0, 0, 0]]

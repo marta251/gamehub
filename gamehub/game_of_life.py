@@ -9,6 +9,7 @@ class GameOfLife:
         self.delta_time = speed / 1000
         self.mode = mode
         self.density = density
+        self.matrix = None
 
     def initialize_matrix(self, rows : int, cols : int, density : int) -> list[list[int]]:
         matrix = [[0 for _ in range(cols)] for _ in range(rows)]
@@ -48,15 +49,29 @@ class GameOfLife:
             return new_matrix
 
     def draw_board(self, stdscr, matrix, color) -> None:
+        stdscr.clear()
         for i in range(len(matrix)):
             for j in range(len(matrix[0])):
                 if matrix[i][j] == 1:
                         try:
                             stdscr.addstr(i, j * 2, "  ", color)
                         except curses.error:
-                            pass                
-    
-    def gameloop(self, stdscr) -> None:
+                            pass  
+        stdscr.refresh()   
+
+    def get_input_and_sleep(self, stdscr) -> str:
+        try:
+            last_key = stdscr.getkey()
+        except:
+            last_key = None
+
+        if self.mode == "Automatic":
+            time.sleep(self.delta_time)
+
+        return last_key
+
+
+    def init_curses(self, stdscr) -> None:
         curses.curs_set(0)  # Hide cursor
 
         if self.mode == "Automatic":
@@ -64,22 +79,21 @@ class GameOfLife:
 
         # Define colors
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_WHITE)
-        COLOR_WHITE_WHITE = curses.color_pair(1)
 
-        matrix = self.initialize_matrix(curses.LINES, curses.COLS//2, self.density)
+        return curses.color_pair(1), curses.LINES, curses.COLS//2
+    
+
+    def gameloop(self, stdscr) -> None:
+        
+        COLOR_WHITE_WHITE, LINES, COLS = self.init_curses(stdscr)
+
+        self.matrix = self.initialize_matrix(LINES, COLS, self.density)
         last_key = None
         while last_key != '\x1b':
-            stdscr.clear()
-            self.draw_board(stdscr, matrix, COLOR_WHITE_WHITE)
-            stdscr.refresh()
-            matrix = self.update_matrix(matrix)
-            try:
-                last_key = stdscr.getkey()
-            except:
-                last_key = None
-
-            if self.mode == "Automatic":
-                time.sleep(self.delta_time)
+            self.draw_board(stdscr, self.matrix, COLOR_WHITE_WHITE)
+            self.matrix = self.update_matrix(self.matrix)
+            last_key = self.get_input_and_sleep(stdscr)
+            
             
         
     def init_game(self) -> None:
