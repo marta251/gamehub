@@ -6,7 +6,7 @@ import time
 
 class Wordle:
     def __init__(self):
-        pass
+        self.won = False
 
     def draw_initial_board(self, stdscr : object, guessed_word : str, guesses : int, alphabet : list) -> None:
         stdscr.clear()
@@ -25,7 +25,6 @@ class Wordle:
         stdscr.addstr(3, 30, "Until now: " + "".join(guessed_word))
         stdscr.addstr(4, 30, "Guesses left: " + str(guesses))
         stdscr.addstr(6, 30, "                                                                                  ")
-        stdscr.refresh()
         stdscr.addstr(6, 30, "Available letters: " + "".join(alphabet))
         stdscr.refresh()
 
@@ -50,7 +49,8 @@ class Wordle:
         stdscr.refresh()
 
     def generate_list_of_words(self) -> list:
-        with open('/home/gamehub/files/words.txt', 'r') as file:
+        #with open('/home/gamehub/files/words.txt', 'r') as file:
+        with open('words.txt', 'r') as file:
             words = file.read().splitlines()
         return words
 
@@ -90,6 +90,9 @@ class Wordle:
         self.draw_initial_board(stdscr, guessed_word, guesses, alphabet)
 
         return meaningful_words, word_to_guess, guessed_word, guesses, alphabet, game_stopped
+    
+    def get_key(self, stdscr) -> str:
+        return stdscr.getkey()
 
     def gameloop(self, stdscr : object) -> None:
         if not self.check_terminal_size(10, 100, stdscr): # Check if the terminal size is enough to play the game
@@ -103,7 +106,7 @@ class Wordle:
             self.draw_inserted_word(stdscr, void_guessed_word)
 
             while characters <= 5:
-                inserted_char = stdscr.getkey()               
+                inserted_char = self.get_key(stdscr)               
                 if inserted_char == '\x1b': # If the player presses ESC then exit the game
                     break
                 elif inserted_char == '\x7f' and characters > 0: # If the player presses Backspace then delete the last character
@@ -130,14 +133,12 @@ class Wordle:
                 
                 if guesses >= 0 and void_guessed_word == word_to_guess:
                     game_stopped = True
+                    self.won = True
                     self.draw_winning_message(stdscr)
                 
                 if guesses == 0 and void_guessed_word != word_to_guess:
                     game_stopped = True
                     self.draw_losing_message(stdscr, word_to_guess)
-
-                stdscr.refresh()
-                time.sleep(1)
-
+                    
     def init_game(self) -> None:
         wrapper(self.gameloop)

@@ -1,3 +1,4 @@
+import string
 import pytest  # type: ignore
 from gamehub.wordle import Wordle
 
@@ -18,3 +19,30 @@ class TestWordle:
     def test_generate_updated_guess(self, new_guessed : str, to_guess : str, alphabet : list, old_guessed : str, expected : tuple) -> None:
         w = Wordle()
         assert w.generate_updated_guess(new_guessed, to_guess, alphabet, old_guessed) == expected
+
+    def test_gameloop(self, monkeypatch) -> None:
+        def mock_inizialize_game(*args):
+            return ["think", "apple", "about"], "think", ["_", "_", "_", "_", "_"], 6, list(string.ascii_lowercase), False
+        
+        def input_factory():
+            inputs = ["t","h","i","n","k","\n"]
+            for i in inputs:
+                yield i
+
+        input_gen = input_factory()
+
+        def get_next_input(*args):
+            return next(input_gen)
+        
+        monkeypatch.setattr(Wordle, "check_terminal_size", lambda *args: True)
+        monkeypatch.setattr(Wordle, "initialize_game", mock_inizialize_game)
+        monkeypatch.setattr(Wordle, "draw_inserted_word", lambda *args: None)
+        monkeypatch.setattr(Wordle, "get_key", get_next_input)
+        monkeypatch.setattr(Wordle, "draw_after_invalid_input", lambda *args: None)
+        monkeypatch.setattr(Wordle, "draw_after_update", lambda *args: None)
+        monkeypatch.setattr(Wordle, "draw_winning_message", lambda *args: None)
+        monkeypatch.setattr(Wordle, "draw_losing_message", lambda *args: None)
+
+        w = Wordle()
+        w.gameloop(None)
+        assert w.won == True
