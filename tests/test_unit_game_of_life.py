@@ -102,18 +102,26 @@ class TestGameOfLife:
 
     def test_gameloop(self, monkeypatch) -> None:
 
-        def mock_get_input_and_sleep(self, *args):
-            return "\x1b"
+        def key_input_factory():
+            inputs = ["a", "\x1b"]
+            for input in inputs:
+                yield input
+
+        key_input_generator = key_input_factory()
+    
+        def get_next_food_coordinates(self, *args):
+            return next(key_input_generator)
+
         
         def mock_initialize_matrix(self, *args):
-            return [[0, 0, 0], 
-                    [0, 0, 0], 
-                    [0, 0, 0]]
+            return [[0, 1, 0, 0, 1], 
+                    [1, 1, 0, 1, 0], 
+                    [1, 1, 1, 0, 0]]
         
         def mock_init_curse(self, *args):
             return None, 3, 6
 
-        monkeypatch.setattr(GameOfLife, "get_input_and_sleep", mock_get_input_and_sleep)
+        monkeypatch.setattr(GameOfLife, "get_input_and_sleep", get_next_food_coordinates)
         monkeypatch.setattr(GameOfLife, "init_curses", mock_init_curse)
         monkeypatch.setattr(GameOfLife, "draw_board", lambda *args: None)
         monkeypatch.setattr(GameOfLife, "initialize_matrix", mock_initialize_matrix)
@@ -121,6 +129,11 @@ class TestGameOfLife:
         g = GameOfLife()
         g.gameloop(None)
 
-        assert g.matrix == [[0, 0, 0], 
-                            [0, 0, 0], 
-                            [0, 0, 0]]
+        # 1st iteration
+        # assert g.matrix == [[1, 1, 1, 0, 0], 
+        #                     [0, 0, 0, 1, 0], 
+        #                     [1, 0, 1, 0, 0]]
+        # 2nd iteration
+        assert g.matrix == [[0, 1, 1, 0, 0], 
+                            [1, 0, 0, 1, 0], 
+                            [0, 0, 0, 0, 0]]
