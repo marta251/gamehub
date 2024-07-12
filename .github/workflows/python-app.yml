@@ -30,7 +30,7 @@ jobs:
         pip install .
     - name: Lint with pylint
       run: |
-        pylint gamehub/gamehub.py --exit-zero
+        pylint $(find . -type f -name "*.py") --exit-zero
     - name: Test and code coverage
       run: |
         coverage run -m pytest -v
