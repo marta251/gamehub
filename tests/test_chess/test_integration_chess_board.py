@@ -1,4 +1,4 @@
-import pytest
+import pytest # type: ignore
 from gamehub.chess.chess_piece import ChessPiece
 from gamehub.chess.chess_board import ChessBoard
 

@@ -103,10 +103,7 @@ class TestGameOfLife:
         count = g.count_live_neighbors(matrix, row, col)
         assert count >= 0 and count <= 8
 
-
-
     def test_gameloop(self, monkeypatch) -> None:
-
         def key_input_factory():
             inputs = ["a", "\x1b"]
             for input in inputs:
@@ -117,7 +114,6 @@ class TestGameOfLife:
         def get_next_food_coordinates(self, *args):
             return next(key_input_generator)
 
-        
         def mock_initialize_matrix(self, *args):
             return [[0, 1, 0, 0, 1], 
                     [1, 1, 0, 1, 0], 

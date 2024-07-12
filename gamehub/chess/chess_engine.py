@@ -6,24 +6,18 @@ class ChessEngine:
         self.initialize_engine()
     
     def initialize_engine(self) -> None:
-        init_commands = [
-            'uci\n',
-            'setoption name Hash value 128\n',
-            'isready\n'
-        ]
+        init_commands = ['uci\n','setoption name Hash value 128\n','isready\n']
         for command in init_commands:
             self.process.stdin.write(command)
             self.process.stdin.flush()
+
         # Wait for 'readyok'
         while True:
             if 'readyok' in self.process.stdout.readline():
                 break
     
     def get_move(self, fen : str) -> tuple[int, int, int, int]:
-        commands = [
-            f'position fen {fen}\n',
-            'go depth 20\n'
-        ]
+        commands = [f'position fen {fen}\n','go depth 20\n']
         for command in commands:
             self.process.stdin.write(command)
             self.process.stdin.flush()

@@ -69,7 +69,6 @@ class GameOfLife:
 
         return last_key
 
-
     def init_curses(self, stdscr) -> None:
         curses.curs_set(0)  # Hide cursor
 

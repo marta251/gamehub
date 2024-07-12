@@ -1,5 +1,5 @@
 import string
-import pytest  # type: ignore
+import pytest # type: ignore
 from gamehub.wordle import Wordle
 
 class TestWordle:

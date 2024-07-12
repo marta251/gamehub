@@ -1,7 +1,6 @@
 import copy
 
 class ChessPiece:
-    #TODO: arroccamento, en passant, promozione
     def __init__(self, piece_char: str, position: tuple[int, int]) -> None:
         # if the piece is uppercase it is white, otherwise it is black
         self.piece_char = piece_char

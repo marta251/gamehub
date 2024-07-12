@@ -1,6 +1,6 @@
 from gamehub.chess.chess import Chess
 from gamehub.chess.chess_engine import ChessEngine
-import pytest
+import pytest # type: ignore
 
 class TestChess:
     # To test the chess gameloops we simulate a very short game with hardcoded inputs
@@ -8,7 +8,6 @@ class TestChess:
     # We simulate the inputs for the game with a generator that returns the inputs (terminal coordinates)
     # We expect the variable checkmate to be True at the end of the gameloop
     def test_multiplayer_gameloop(self, monkeypatch):
-        
         # Mock the user input
         def input_factory():
             inputs = [(25, 18, False), (25, 15, False), # f2f3
@@ -39,7 +38,6 @@ class TestChess:
 
     # Same as above but for the single player gameloop
     def test_singleplayer_gameloop(self, monkeypatch):
-
         # We need to mock the chess engine to return the moves we want 
         def chess_engine_best_move_factory():
             best_moves = [(4, 1 , 4, 3), # e7e5
@@ -82,18 +80,16 @@ class TestChess:
         c.single_player_gameloop(None)
         assert c.checkmate == True
 
-    @pytest.mark.parametrize("fen, expected", [
-        ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", ("w", 1)),
-        ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", ("b", 32))
-    ])   
+    @pytest.mark.parametrize("fen, expected",
+                             [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", ("w", 1)),
+                              ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", ("b", 32))])   
     def test_constructor(self, fen : str, expected : tuple[str, int]) -> None:
         c = Chess(fen=fen)
         assert c.current_player == expected[0] and c.turn == expected[1]
 
-    @pytest.mark.parametrize("starting_fen, start, end, expected", [
-        ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", (4, 6), (4, 4), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2"), # e4
-        ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", (7, 3), (7, 4), "8/5b2/8/P5k1/1P3ppp/3R4/2K5/8 w - - 0 33")
-    ])
+    @pytest.mark.parametrize("starting_fen, start, end, expected",
+                             [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", (4, 6), (4, 4), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2"), # e4
+                              ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", (7, 3), (7, 4), "8/5b2/8/P5k1/1P3ppp/3R4/2K5/8 w - - 0 33")])
     def test_move_piece(self, starting_fen : str, start : tuple[int, int], end : tuple[int, int], expected : str) -> None:
         c = Chess(fen=starting_fen)
         c.move_piece(start, end)

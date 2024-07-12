@@ -200,7 +200,6 @@ class Chess:
             return
 
         self.update_screen(stdscr, COLOR_WHITE_BLACK)
-
         engine = ChessEngine()
 
         while not self.checkmate and not self.stalemate:
