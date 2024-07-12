@@ -68,6 +68,8 @@ class ChessPiece:
                 self.color == value.color and
                 self.position == value.position)
     
+    def get_piece_char(self) -> str:
+        return self.piece_char
 
     def is_enemy(self, piece: 'ChessPiece') -> bool:
         return self.color != piece.color

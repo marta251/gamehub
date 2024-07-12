@@ -87,7 +87,7 @@ class ChessBoard:
                     if empty > 0:
                         fen += str(empty)
                         empty = 0
-                    fen += elem.piece_char
+                    fen += elem.get_piece_char()
             if empty > 0:
                 fen += str(empty)
             fen += "/"
@@ -100,6 +100,6 @@ class ChessBoard:
     def detect_king_coordinates (self, color):
         for i in range(8):
             for j in range(8):
-                if self.matrix[i][j] != None and (self.matrix[i][j].piece_char == "K" or self.matrix[i][j].piece_char == "k") and self.matrix[i][j].color == color:
+                if self.matrix[i][j] != None and (self.matrix[i][j].get_piece_char() == "K" or self.matrix[i][j].get_piece_char() == "k") and self.matrix[i][j].color == color:
                     return (j, i)
         return None
