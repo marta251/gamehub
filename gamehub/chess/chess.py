@@ -180,7 +180,6 @@ class Chess:
                 if (x_end, y_end) in possible:
                     self.move_piece((x_start, y_start), (x_end, y_end))
                     self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
-
                     if not self.check:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
                     else:
@@ -212,9 +211,7 @@ class Chess:
                     break
                 x_start, y_start = self.from_input_to_board(x1, y1)
             else:
-                x_start, y_start, x_end, y_end = engine.get_move(self.board.convert_board_to_fen())
-                stdscr.addstr(32, 0, "Engine move: " + str((x_start, y_start, x_end, y_end)))
-                stdscr.refresh()   
+                x_start, y_start, x_end, y_end = engine.get_move(self.board.convert_board_to_fen())                  
 
             # Check if the cursor is on a piece, and if it's the current player's piece
             if x_start is not None and y_start is not None and self.board.matrix[y_start][x_start] != None and self.board.matrix[y_start][x_start].color == self.current_player:
@@ -232,10 +229,6 @@ class Chess:
                     x_end, y_end = self.from_input_to_board(x2, y2)
                 if (x_end, y_end) in possible:
                     self.move_piece((x_start, y_start), (x_end, y_end))
-                    self.current_player = self.players[(self.turn) % 2]
-                    self.turn += 1
-                    self.board.playerToMove = self.current_player
-                    self.board.fullMoveCounter = self.turn
                     self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
 
                     if not self.check:

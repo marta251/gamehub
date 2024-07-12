@@ -1,4 +1,5 @@
 from gamehub.chess.chess import Chess
+from gamehub.chess.chess_engine import ChessEngine
 import pytest
 
 class TestChess:
@@ -24,3 +25,90 @@ class TestChess:
         c = Chess(fen=fen)
         check, checkmate, stalemate = c.detect_check_checkmate_stalemate()
         assert check == expected[0] and checkmate == expected[1] and stalemate == expected[2]
+
+
+    # To test the chess gameloops we simulate a very short game with hardcoded inputs
+    # The game is a checkmate in 4 moves (f2f3, e7e5, g2g4, d8h4)
+    # We simulate the inputs for the game with a generator that returns the inputs (terminal coordinates)
+    # We expect the variable checkmate to be True at the end of the gameloop
+    def test_multiplayer_gameloop(self, monkeypatch):
+        
+        # Mock the user input
+        def input_factory():
+            inputs = [(25, 18, False), (25, 15, False), # f2f3
+                      (20, 3 , False), (20, 9 , False), # e7e5
+                      (30, 18, False), (30, 12, False), # g2g4
+                      (15, 0 , False), (35, 12, False)] # d8h4 (checkmate)
+            for i in inputs:
+                yield i
+
+        input_gen = input_factory()
+
+        def get_next_input(*args):
+            return next(input_gen)
+        
+        monkeypatch.setattr(Chess, "get_input", get_next_input)
+
+        
+        # Mock the curses functions
+        def mock_init_curses(self, *args):
+            return None, None, None    
+        
+        monkeypatch.setattr(Chess, "init_curses", mock_init_curses)
+        monkeypatch.setattr(Chess, "check_terminal_size", lambda *args: True)
+        monkeypatch.setattr(Chess, "update_screen", lambda *args: None)
+
+        
+        c = Chess()
+        c.multiplayer_gameloop(None)
+        assert c.checkmate == True
+
+
+    # Same as above but for the single player gameloop
+    def test_singleplayer_gameloop(self, monkeypatch):
+
+        # We need to mock the chess engine to return the moves we want 
+        def chess_engine_best_move_factory():
+            best_moves = [(4, 1 , 4, 3), # e7e5
+                          (3, 0, 7, 4)]  # d8h4 (checkmate)
+            for best_move in best_moves:
+                yield best_move
+
+        best_move_gen = chess_engine_best_move_factory()
+
+        def get_next_best_move(*args):
+            return next(best_move_gen)
+        
+        monkeypatch.setattr(ChessEngine, "__init__", lambda *args: None)
+        monkeypatch.setattr(ChessEngine, "get_move", get_next_best_move)
+        monkeypatch.setattr(ChessEngine, "close", lambda *args: None)
+
+        # Mock the user input
+        def input_factory():
+            inputs = [(25, 18, False), (25, 15, False), # f2f3
+                      (30, 18, False), (30, 12, False)] # g2g4
+            for i in inputs:
+                yield i
+
+        input_gen = input_factory()
+
+        def get_next_input(*args):
+            return next(input_gen)
+        
+        monkeypatch.setattr(Chess, "get_input", get_next_input)
+
+
+        # Mock the curses functions
+        def mock_init_curses(self, *args):
+            return None, None, None
+        
+        monkeypatch.setattr(Chess, "init_curses", mock_init_curses)
+        monkeypatch.setattr(Chess, "check_terminal_size", lambda *args: True)
+        monkeypatch.setattr(Chess, "update_screen", lambda *args: None)
+
+
+        c = Chess()
+        c.single_player_gameloop(None)
+        assert c.checkmate == True
+
+        
