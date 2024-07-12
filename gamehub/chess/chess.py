@@ -27,7 +27,7 @@ class Chess:
         self.board.playerToMove = self.current_player
         self.board.fullMoveCounter = self.turn
             
-    def get_all_possible_moves_count(self):
+    def get_all_possible_moves_count(self) -> int: 
         all_possible_moves_count = 0
         for i in range(8):
             for j in range(8):
@@ -35,7 +35,7 @@ class Chess:
                     all_possible_moves_count = all_possible_moves_count + len(self.board.matrix[i][j].legal_moves(self.board.matrix))
         return all_possible_moves_count
     
-    def detect_check_checkmate_stalemate(self):
+    def detect_check_checkmate_stalemate(self) -> tuple[bool, bool, bool]:
         check, checkmate, stalemate = False, False, False
         matrix = self.board.matrix
         king_position = self.board.detect_king_coordinates(self.current_player)
@@ -49,7 +49,7 @@ class Chess:
 
         return check, checkmate, stalemate
 
-    def init_curses(self):
+    def init_curses(self) -> tuple[int, int, int]:
         curses.curs_set(0)  # Hide cursor
         curses.mousemask(1) # Enable mouse events
 

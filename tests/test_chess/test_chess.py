@@ -3,8 +3,6 @@ from gamehub.chess.chess_engine import ChessEngine
 import pytest
 
 class TestChess:
-    def test_constructor(self):
-        pass
 
     @pytest.mark.parametrize("starting_fen, start, end, expected", [
         ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", (4, 6), (4, 4), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2"),    # e4
@@ -110,5 +108,15 @@ class TestChess:
         c = Chess()
         c.single_player_gameloop(None)
         assert c.checkmate == True
+
+
+    @pytest.mark.parametrize("fen, expected", [
+        ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", ("w", 1)),
+        ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", ("b", 32))
+    ])   
+    def test_constructor(self, fen : str, expected : tuple[str, int]) -> None:
+        c = Chess(fen=fen)
+        assert c.current_player == expected[0] and c.turn == expected[1]
+        
 
         
