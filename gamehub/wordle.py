@@ -57,8 +57,8 @@ class Wordle:
         stdscr.refresh()
 
     def generate_list_of_words(self) -> list:
-        #with open('/home/gamehub/files/words.txt', 'r') as file:
-        with open('words.txt', 'r') as file:
+        with open('/home/gamehub/files/words.txt', 'r') as file:
+        #with open('words.txt', 'r') as file:
             words = file.read().splitlines()
         return words
 
