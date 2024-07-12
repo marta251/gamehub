@@ -6,10 +6,8 @@ class TestChessBoard:
     @pytest.mark.parametrize("fen, expected",
                                 [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
                                 ('w', 'KQkq', '-', 0, 1))])
-    def test_constructor_chess_board_from_fen(self, fen : str, expected : tuple[list[list[ChessPiece]], str, str, str, int, int], monkeypatch) -> None:
-        
-        monkeypatch.setattr()
-        
+    def test_constructor_chess_board_from_fen(self, fen : str, expected : tuple[list[list[ChessPiece]], str, str, str, int, int]) -> None:
+            
         board = ChessBoard(fen)
         assert (board.playerToMove == expected[1] and
                 board.castlingRights == expected[2] and
