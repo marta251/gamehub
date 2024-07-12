@@ -14,11 +14,14 @@ class Snake:
             self.delta_time = 0.05
         else:
             self.delta_time = 0.025
-
         self.score = 0
         self.highscore = self.get_highscore()
 
-    def calcule_new_position(self, y : int, x : int, direction : str, SNAKE_BOUNDS : tuple[int, int, int, int]) -> tuple[int, int]:
+    def calcule_new_position(self,
+                             y : int,
+                             x : int,
+                             direction : str,
+                             SNAKE_BOUNDS : tuple[int, int, int, int]) -> tuple[int, int]:
         if direction == "UP":
             if y > SNAKE_BOUNDS[0]:
                 y -= 1
@@ -83,7 +86,6 @@ class Snake:
         return False
 
     def verify_collision(self, body : deque[tuple[int, int]]) -> bool:
-
         for i in range(len(body) - 1):
             if body[len(body) - 1] == body[i]:
                 return True
@@ -114,7 +116,6 @@ class Snake:
         return True
 
     def set_up_curses(self, stdscr) -> None:
-
         curses.curs_set(0)  # Hide cursor
         stdscr.nodelay(True) # Non-blocking input
 
@@ -131,12 +132,20 @@ class Snake:
 
         main_window = curses.newwin(LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, 3, 5)
         score_window = curses.newwin(2, 12, 0, curses.COLS - 20)
-
         stdscr.refresh()
 
         return curses.color_pair(1), curses.color_pair(2), curses.color_pair(3), LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, main_window, score_window
 
-    def update_main_window(self, main_window, color_border, color_snake, color_food, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, game_over=False) -> None:
+    def update_main_window(self,
+                           main_window,
+                           color_border,
+                           color_snake,
+                           color_food,
+                           LINES_MAIN_WINDOW,
+                           COLS_MAIN_WINDOW,
+                           body, x_food,
+                           y_food,
+                           game_over=False) -> None:
         main_window.clear()
         main_window.border(color_border, color_border, color_border, color_border, color_border, color_border, color_border, color_border)
         self.draw_thick_border(main_window, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, color_border)
@@ -165,14 +174,11 @@ class Snake:
         key = stdscr.getkey()
         return key
 
-
     def gameloop(self, stdscr) -> None:
-
         if not self.check_terminal_size(15, 40, stdscr):
             return
 
         COLOR_GREEN_GREEN, COLOR_RED_RED, COLOR_WHITE_WHITE, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, main_window, score_window = self.set_up_curses(stdscr)
-
         SNAKE_BOUNDS = (1, LINES_MAIN_WINDOW - 2, 2, COLS_MAIN_WINDOW - 4) # (y1,y2,x1,x2) : snake can't get out of this bounds (but it can walk over this bounds)
 
         # Initial snake
@@ -181,9 +187,9 @@ class Snake:
         last_key = "KEY_RIGHT"
 
         y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
-        self.update_score_window(score_window)   
-        while last_key != '\x1b':
+        self.update_score_window(score_window)
 
+        while last_key != '\x1b':
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, SNAKE_BOUNDS)
             body.append((y, x))
             if self.verify_collision(body):
@@ -205,7 +211,6 @@ class Snake:
         if last_key != '\x1b' and self.get_input_end_game(stdscr) != '\x1b':
             self.score = 0
             self.init_game()
-            
 
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper

@@ -33,31 +33,30 @@ class GameOfLife:
         return count
 
     def update_matrix(self, matrix : list[list[int]]) -> list[list[int]]:
-            new_matrix = [[0 for _ in range(len(matrix[0]))] for _ in range(len(matrix))]
-            for i in range(len(matrix)):
-                for j in range(len(matrix[0])):
-                    live_neighbors = self.count_live_neighbors(matrix, i, j)
-
-                    if matrix[i][j] == 1: # Cell is alive
-                        if live_neighbors < 2 or live_neighbors > 3: # Die because of underpopulation or overpopulation
-                            new_matrix[i][j] = 0
-                        elif live_neighbors == 3 or live_neighbors == 2:  # Survive
-                            new_matrix[i][j] = 1
-                    else:         # Cell is dead
-                        if live_neighbors == 3: # Reproduce
-                            new_matrix[i][j] = 1    
-            return new_matrix
+        new_matrix = [[0 for _ in range(len(matrix[0]))] for _ in range(len(matrix))]
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
+                live_neighbors = self.count_live_neighbors(matrix, i, j)
+                if matrix[i][j] == 1: # Cell is alive
+                    if live_neighbors < 2 or live_neighbors > 3:
+                        new_matrix[i][j] = 0 # Die (underpopulation or overpopulation)
+                    elif live_neighbors == 3 or live_neighbors == 2:  # Survive
+                        new_matrix[i][j] = 1
+                else: # Cell is dead
+                    if live_neighbors == 3: # Reproduce
+                        new_matrix[i][j] = 1
+        return new_matrix
 
     def draw_board(self, stdscr, matrix, color) -> None:
         stdscr.clear()
         for i in range(len(matrix)):
             for j in range(len(matrix[0])):
                 if matrix[i][j] == 1:
-                        try:
-                            stdscr.addstr(i, j * 2, "  ", color)
-                        except curses.error:
-                            pass  
-        stdscr.refresh()   
+                    try:
+                        stdscr.addstr(i, j * 2, "  ", color)
+                    except curses.error:
+                        pass
+        stdscr.refresh()
 
     def get_input_and_sleep(self, stdscr) -> str:
         try:
@@ -81,20 +80,15 @@ class GameOfLife:
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_WHITE)
 
         return curses.color_pair(1), curses.LINES, curses.COLS//2
-    
 
     def gameloop(self, stdscr) -> None:
-        
         COLOR_WHITE_WHITE, LINES, COLS = self.init_curses(stdscr)
-
         self.matrix = self.initialize_matrix(LINES, COLS, self.density)
         last_key = None
         while last_key != '\x1b':
             self.draw_board(stdscr, self.matrix, COLOR_WHITE_WHITE)
             self.matrix = self.update_matrix(self.matrix)
             last_key = self.get_input_and_sleep(stdscr)
-            
-            
-        
+   
     def init_game(self) -> None:
         wrapper(self.gameloop)  # Call the function via wrapper

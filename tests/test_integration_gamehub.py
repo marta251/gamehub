@@ -1,18 +1,16 @@
-import pytest # type: ignore
+import argparse
 from gamehub.snake import Snake
 from gamehub.game_of_life import GameOfLife
 from gamehub.chess.chess import Chess
 from gamehub.wordle import Wordle
 from gamehub.gamehub import GameHub
-import argparse
 
 class TestIntegrationGameHub:
-    def test_integration_arguments_snake(self, monkeypatch):
+    def test_integration_arguments_snake(self, monkeypatch) -> None:
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
                 game="snake",
-                difficulty="Easy"
-            )
+                difficulty="Easy")
         
         monkeypatch.setattr(GameHub, "setup_parsers", namespace_generator)
         monkeypatch.setattr(Snake, "init_game", lambda n: None)
@@ -27,8 +25,7 @@ class TestIntegrationGameHub:
                 game="game_of_life",
                 speed=100,
                 mode="Automatic",
-                density=30
-            )
+                density=30)
         
         monkeypatch.setattr(GameHub, "setup_parsers", namespace_generator)
         monkeypatch.setattr(GameOfLife, "init_game", lambda n: None)
@@ -37,12 +34,11 @@ class TestIntegrationGameHub:
         game = g.run()
         assert game.speed == 100 and game.mode == "Automatic" and game.density == 30
 
-    def test_integration_arguments_chess(self, monkeypatch):
+    def test_integration_arguments_chess(self, monkeypatch) -> None:
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
                 game="chess",
-                mode="Multiplayer"
-            )
+                mode="Multiplayer")
         
         monkeypatch.setattr(GameHub, "setup_parsers", namespace_generator)
         monkeypatch.setattr(Chess, "init_game", lambda n: None)
@@ -51,11 +47,10 @@ class TestIntegrationGameHub:
         game = g.run()
         assert game.mode == "Multiplayer"
 
-    def test_integration_arguments_wordle(self, monkeypatch):
+    def test_integration_arguments_wordle(self, monkeypatch) -> None:
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
-                game="wordle"
-            )
+                game="wordle")
         
         monkeypatch.setattr(GameHub, "setup_parsers", namespace_generator)
         monkeypatch.setattr(Wordle, "init_game", lambda n: None)

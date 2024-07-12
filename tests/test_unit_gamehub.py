@@ -21,7 +21,12 @@ class TestGameHub:
                               (0, 0, 2, 0),
                               (2, 0, 2, 2),
                               (3, 0, 2, 2)])
-    def test_apply_bound(self, x : int, lower : int, upper : int, expected : int, monkeypatch) -> None:
+    def test_apply_bound(self,
+                         x : int,
+                         lower : int,
+                         upper : int,
+                         expected : int,
+                         monkeypatch) -> None:
         monkeypatch.setattr(GameHub, "setup_parsers", lambda n: None)
         g = GameHub()
         assert g.apply_bound(x, lower, upper) == expected

@@ -38,8 +38,7 @@ class TestGameOfLife:
                                 [([[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]),
                                 ([[1, 1, 1], [1, 1, 1], [1, 1, 1]], [[1, 0, 1], [0, 0, 0], [1, 0, 1]]),
                                 ([[0, 1, 1], [1, 0, 1], [0, 1, 0]], [[0, 1, 1], [1, 0, 1], [0, 1, 0]]),
-                                ([[0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, 0]], [[0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, 0]])])
-                             
+                                ([[0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, 0]], [[0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, 0]])])                       
     def test_update_matrix (self, matrix : list[list[int]], expected : list[list[int]]) -> None:
         g = GameOfLife()
         assert g.update_matrix(matrix) == expected
@@ -67,7 +66,7 @@ class TestGameOfLife:
     @settings(max_examples=5)
     def test_update_matrix_values(self, matrix : list[list[int]]) -> None:
         g = GameOfLife()
-        new_matrix =  g.update_matrix(matrix)        
+        new_matrix = g.update_matrix(matrix)    
         all_ones_or_zeros = all([elem == 0 or elem == 1 for row in new_matrix for elem in row])
         assert all_ones_or_zeros
 
@@ -77,9 +76,12 @@ class TestGameOfLife:
                                 ([[1, 1, 1], [1, 1, 1], [1, 1, 1]], 2, 2, 3),
                                 ([[1, 1, 1], [1, 1, 1], [1, 1, 1]], 1, 1, 8),                               
                                 ([[0, 1, 1], [1, 0, 1], [0, 1, 0]], 1, 0, 2),
-                                ([[0, 1, 1], [1, 0, 1], [0, 1, 0]], 1, 1, 5)                                  
-                                ])                            
-    def test_count_live_neighbors(self, matrix : list[list[int]], row : int, col : int, expected : int) -> None:
+                                ([[0, 1, 1], [1, 0, 1], [0, 1, 0]], 1, 1, 5)])                            
+    def test_count_live_neighbors(self,
+                                  matrix : list[list[int]],
+                                  row : int,
+                                  col : int,
+                                  expected : int) -> None:
         g = GameOfLife()
         assert g.count_live_neighbors(matrix, row, col) == expected
 
@@ -93,7 +95,10 @@ class TestGameOfLife:
         strategies.integers(min_value=0, max_value=6)
         )
     @settings(max_examples=5)
-    def test_count_live_neighbors_bounds(self, matrix : list[list[int]], row : int, col : int) -> None:
+    def test_count_live_neighbors_bounds(self,
+                                         matrix : list[list[int]],
+                                         row : int,
+                                         col : int) -> None:
         g = GameOfLife()
         count = g.count_live_neighbors(matrix, row, col)
         assert count >= 0 and count <= 8

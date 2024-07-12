@@ -8,7 +8,11 @@ class Wordle:
     def __init__(self):
         self.won = False
 
-    def draw_initial_board(self, stdscr : object, guessed_word : str, guesses : int, alphabet : list) -> None:
+    def draw_initial_board(self,
+                           stdscr : object,
+                           guessed_word : str,
+                           guesses : int,
+                           alphabet : list) -> None:
         stdscr.clear()
         stdscr.addstr(1, 30, "Enter a five letter word, press Enter to confirm or ESC to exit.")
         stdscr.addstr(2, 30, "Inserted word: " + "".join(guessed_word))
@@ -21,7 +25,11 @@ class Wordle:
         stdscr.addstr(2, 30, "Inserted word: " + "".join(void_guessed_word))
         stdscr.refresh()
 
-    def draw_after_update(self, stdscr : object, guessed_word : list, guesses : int, alphabet : list) -> None:
+    def draw_after_update(self,
+                          stdscr : object,
+                          guessed_word : list,
+                          guesses : int,
+                          alphabet : list) -> None:
         stdscr.addstr(3, 30, "Until now: " + "".join(guessed_word))
         stdscr.addstr(4, 30, "Guesses left: " + str(guesses))
         stdscr.addstr(6, 30, "                                                                                  ")
@@ -54,15 +62,21 @@ class Wordle:
             words = file.read().splitlines()
         return words
 
-    def generate_updated_guess(self, new_guessed : str, to_guess : str, alphabet : list, old_guessed : str) -> tuple:
+    def generate_updated_guess(self,
+                               new_guessed : str,
+                               to_guess : str,
+                               alphabet : list,
+                               old_guessed : str) -> tuple:
         updated_guess = ["_" for _ in range(5)]
-        for i in range(5): # For every character in the guessed word check if it is in the target word
-            if new_guessed[i] in to_guess: # If the character is in the target word put it wherever it is needed
+        # For every character in the guessed word check if it is in the target word
+        for i in range(5):
+            if new_guessed[i] in to_guess: # If it is, put it wherever it is needed
                 for j in range(5):
                     if new_guessed[i] == to_guess[j]:
                         updated_guess[j] = new_guessed[i]
             else:
-                if new_guessed[i] in alphabet: # Remove guessed[i] from the alphabet (only if it is still there)
+                # Remove guessed[i] from the alphabet only if it is still there
+                if new_guessed[i] in alphabet:
                     alphabet.remove(new_guessed[i])
         
         for i in range(5): # Check if the character is already guessed or not
@@ -83,7 +97,7 @@ class Wordle:
         curses.curs_set(0)
         meaningful_words = self.generate_list_of_words()
         word_to_guess = random.choice(meaningful_words)
-        guessed_word = ["_" for _ in range(5)] # Cotains only the letters that the player has guessed
+        guessed_word = ["_" for _ in range(5)] # The letters that the player has guessed
         guesses = 6
         alphabet = list(string.ascii_lowercase)
         game_stopped = False # Flag to stop the game (when the player wins or loses)
@@ -95,14 +109,15 @@ class Wordle:
         return stdscr.getkey()
 
     def gameloop(self, stdscr : object) -> None:
-        if not self.check_terminal_size(10, 100, stdscr): # Check if the terminal size is enough to play the game
+        # Check if the terminal size is enough to play the game
+        if not self.check_terminal_size(10, 100, stdscr):
             return
         
         meaningful_words, word_to_guess, guessed_word, guesses, alphabet, game_stopped = self.initialize_game(stdscr)
 
         while not game_stopped:
             characters = 0 # Number of characters inserted by the player
-            void_guessed_word = ["_" for _ in range(5)] # The space where the player inserts a new guess
+            void_guessed_word = ["_" for _ in range(5)] # A new guess from the player
             self.draw_inserted_word(stdscr, void_guessed_word)
 
             while characters <= 5:
