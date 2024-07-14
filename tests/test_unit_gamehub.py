@@ -1,3 +1,4 @@
+import sys
 import pytest # type: ignore
 from gamehub.gamehub import GameHub
 from hypothesis import given, strategies, settings, HealthCheck # type: ignore
@@ -30,3 +31,27 @@ class TestGameHub:
         monkeypatch.setattr(GameHub, "setup_parsers", lambda n: None)
         g = GameHub()
         assert g.apply_bound(x, lower, upper) == expected
+
+    def test_parse_arguments_snake(self, monkeypatch) -> None:
+        monkeypatch.setattr("sys.argv", ["gamehub", "snake","--difficulty", "Easy"])
+        g = GameHub()
+        assert g.args.game == "snake" and g.args.difficulty == "Easy"
+
+    def test_parse_arguments_gof(self, monkeypatch) -> None:
+        monkeypatch.setattr("sys.argv",
+                            ["gamehub", "game_of_life",
+                             "--speed", "100",
+                             "--mode", "Automatic",
+                             "--density", "40"])
+        g = GameHub()
+        assert g.args.game == "game_of_life" and g.args.speed == 100 and g.args.mode == "Automatic" and g.args.density == 40
+
+    def test_parse_arguments_word_guesser(self, monkeypatch) -> None:
+        monkeypatch.setattr("sys.argv", ["gamehub", "word_guesser"])
+        g = GameHub()
+        assert g.args.game == "word_guesser"
+
+    def test_parse_arguments_chess(self, monkeypatch) -> None:
+        monkeypatch.setattr("sys.argv", ["gamehub", "chess", "--mode", "Singleplayer"])
+        g = GameHub()
+        assert g.args.game == "chess" and g.args.mode == "Singleplayer"
