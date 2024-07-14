@@ -9,7 +9,7 @@ class TestGameOfLife:
     
     @given(strategies.integers(min_value=50, max_value=1000))
     @settings(max_examples=5)
-    def test_constructor_delta_time(self, speed : int) -> None:
+    def test_property_constructor_delta_time(self, speed : int) -> None:
         g = GameOfLife(speed)
         assert g.delta_time == speed / 1000
 
@@ -18,7 +18,7 @@ class TestGameOfLife:
         strategies.integers(min_value=3, max_value=20)
         )
     @settings(max_examples=5)
-    def test_initialize_matrix_dimension(self, rows : int, cols : int) -> None:
+    def test_property_initialize_matrix_dimension(self, rows : int, cols : int) -> None:
         g = GameOfLife()
         matrix = g.initialize_matrix(rows, cols, 10)
         assert len(matrix) == rows and len(matrix[0]) == cols
@@ -28,7 +28,7 @@ class TestGameOfLife:
         strategies.integers(min_value=3, max_value=20)
         )
     @settings(max_examples=5)
-    def test_initialize_matrix_values(self, rows : int, cols : int) -> None:
+    def test_property_initialize_matrix_values(self, rows : int, cols : int) -> None:
         g = GameOfLife()
         matrix =  g.initialize_matrix(rows, cols, 10)
         all_ones_or_zeros = all([elem == 0 or elem == 1 for row in matrix for elem in row])
@@ -51,7 +51,7 @@ class TestGameOfLife:
             min_size=7, max_size=7)
         )
     @settings(max_examples=5)
-    def test_update_matrix_dimension(self, matrix : list[list[int]]) -> None:
+    def test_property_update_matrix_dimension(self, matrix : list[list[int]]) -> None:
         g = GameOfLife()
         new_matrix =  g.update_matrix(matrix)
         assert len(new_matrix) == len(matrix) and len(new_matrix[0]) == len(matrix[0])
@@ -64,7 +64,7 @@ class TestGameOfLife:
             min_size=7, max_size=7)
         )
     @settings(max_examples=5)
-    def test_update_matrix_values(self, matrix : list[list[int]]) -> None:
+    def test_property_update_matrix_values(self, matrix : list[list[int]]) -> None:
         g = GameOfLife()
         new_matrix = g.update_matrix(matrix)    
         all_ones_or_zeros = all([elem == 0 or elem == 1 for row in new_matrix for elem in row])
@@ -76,7 +76,7 @@ class TestGameOfLife:
                 strategies.integers(min_value=0, max_value=1), min_size=6, max_size=6),
                 min_size=6, max_size=6))
     @settings(max_examples=5)
-    def test_count_live_neighbors_values(self, matrix : list[list[int]]) -> None:
+    def test_property_count_live_neighbors_values(self, matrix : list[list[int]]) -> None:
         g = GameOfLife()
         all_count_between_0_and_8 = all([g.count_live_neighbors(matrix, row, col) >= 0 and g.count_live_neighbors(matrix, row, col) <= 8 for row in range(len(matrix)) for col in range(len(matrix[0]))])
         assert all_count_between_0_and_8
@@ -106,7 +106,7 @@ class TestGameOfLife:
         strategies.integers(min_value=0, max_value=6)
         )
     @settings(max_examples=5)
-    def test_count_live_neighbors_bounds(self,
+    def test_property_count_live_neighbors_bounds(self,
                                          matrix : list[list[int]],
                                          row : int,
                                          col : int) -> None:

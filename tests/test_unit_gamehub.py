@@ -12,7 +12,7 @@ class TestGameHub:
         return a, b
     @given(strategies.integers(), smaller_than())
     @settings(max_examples=20, suppress_health_check=[HealthCheck.function_scoped_fixture])
-    def test_apply_bound_range(self, monkeypatch, x : int, bounds : tuple[int, int]) -> None:
+    def test_property_apply_bound_range(self, monkeypatch, x : int, bounds : tuple[int, int]) -> None:
         monkeypatch.setattr(GameHub, "setup_parsers", lambda n: None)
         g = GameHub()
         res = g.apply_bound(x, bounds[0], bounds[1])

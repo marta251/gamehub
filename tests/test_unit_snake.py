@@ -43,7 +43,7 @@ class TestSnake:
                                     direction : str,
                                     SNAKE_BOUNDS : tuple[int, int, int, int],
                                     expected : tuple[int, int]) -> None:
-        s= Snake()
+        s = Snake()
         assert s.calcule_new_position(y, x, direction, SNAKE_BOUNDS) == expected
 
     @composite
@@ -53,7 +53,7 @@ class TestSnake:
         return a, b
     @composite
     def smaller_than_x(draw) -> tuple[int, int]:
-        a = draw(integers(min_value=2)) * 2
+        a = draw(integers(min_value=1)) * 2
         b = draw(integers(min_value=a)) * 2
         return a, b
     @given(strategies.tuples(
@@ -64,17 +64,18 @@ class TestSnake:
             strategies.just("LEFT") |
             strategies.just("RIGHT")))
     @settings(max_examples=20)
-    def test_property_calcule_new_position_always_inside(self, t : tuple[tuple[int, int], tuple[int, int], str]) -> None:
+    def test_property_calcule_new_position_always_inside(self, t : tuple) -> None:
         s = Snake()
         SNAKE_BOUNDS = (1, t[0][1], 2, t[1][1])
         res_y, res_x = s.calcule_new_position(t[0][0],t[1][0],t[2],SNAKE_BOUNDS)
         assert res_y >= SNAKE_BOUNDS[0] and res_y <= SNAKE_BOUNDS[1] and res_x >= SNAKE_BOUNDS[2] and res_x <= SNAKE_BOUNDS[3] and res_x % 2 == 0
        
     @pytest.mark.parametrize("body, SNAKE_BOUNDS",
-                             [   ([(0, 0), (0, 2), (0, 4)], (1, 5, 2, 10)),
-                                 ([(0, 0), (0, 2), (0, 4)], (1, 5, 2, 10)),
+                             [   ([(1, 2), (1, 4), (1, 6)], (1, 5, 2, 10)),
+                                 ([(1, 2), (1, 4), (1, 6)], (1, 5, 2, 10)),
                                  ([(2, 2), (3, 2), (3, 4)], (1, 5, 2, 10)),
-                                 ([(2, 2), (3, 2), (3, 4)], (1, 5, 2, 10))])
+                                 ([(2, 2), (3, 2), (3, 4)], (1, 5, 2, 10)),
+                                 ([(1, 2), (1, 4)], (1, 1, 2, 6))])
     def test_new_food_coordinates(self,
                                   body : deque[tuple[int, int]],
                                   SNAKE_BOUNDS : tuple[int, int, int, int]) -> None:
@@ -120,7 +121,7 @@ class TestSnake:
     # A fourth food item is spawned on a different row (not on the snake's path).
     # The game should end when the snake collides with the right wall.
     # If everything goes as expected, the score should be 3.
-    def test_gameloop(self, monkeypatch) -> None:
+    def test_gameloop_without_restart(self, monkeypatch) -> None:
         def food_coordinates_factory():
             coordinates = [(2, 8), (2, 12), (2, 16), (5, 6)]
             for coord in coordinates:
@@ -140,8 +141,8 @@ class TestSnake:
         monkeypatch.setattr(Snake, "update_main_window", lambda *args: None)
         monkeypatch.setattr(Snake, "update_score_window", lambda *args: None)
         monkeypatch.setattr(Snake, "get_input_end_game", lambda *args: '\x1b')
-        monkeypatch.setattr(Snake, "set_highscore", lambda *args: None)
-        monkeypatch.setattr(Snake, "get_highscore", lambda *args: 0)
+        #monkeypatch.setattr(Snake, "set_highscore", lambda *args: None)
+        #monkeypatch.setattr(Snake, "get_highscore", lambda *args: 0)
 
         # Mock the input method to always return KEY_RIGHT
         monkeypatch.setattr(Snake, "get_input_and_delay", lambda *args: "KEY_RIGHT")
