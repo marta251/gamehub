@@ -1,4 +1,5 @@
 import argparse
+import pytest # type: ignore
 from gamehub.snake import Snake
 from gamehub.game_of_life import GameOfLife
 from gamehub.chess.chess import Chess
