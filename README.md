@@ -30,10 +30,8 @@ Usage example:
 gamehub game_of_life --mode Automatic --speed 100 --density 20
 ```
 
-## Installation
-### Normal Installation
-### Using Docker Hub
-You can also pull the pre-build image from Docker Hub:
+## Execution
+You can pull the pre-build image from Docker Hub:
 
 1. Ensure you have already installed Docker. Otherwise you can follow the instructions [here](https://docs.docker.com/engine/install/).
 
@@ -48,5 +46,5 @@ You can also pull the pre-build image from Docker Hub:
     ```
 
 ## Maintainers
-- marta01.malagutti@edu.unife.it
-- riccardo.morelli@edu.unife.it
+- Marta Malagutti marta01.malagutti@edu.unife.it
+- Riccardo Morelli riccardo.morelli@edu.unife.it
