@@ -151,7 +151,8 @@ class Snake:
             key = stdscr.getkey()
         except:
             key = None
-        time.sleep(self.delta_time)
+        finally:
+            time.sleep(self.delta_time)
         return key
     
     def get_input_end_game(self, stdscr) -> str:
