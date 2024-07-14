@@ -210,6 +210,7 @@ class Snake:
 
         if last_key != '\x1b' and self.get_input_end_game(stdscr) != '\x1b':
             self.score = 0
+            curses.endwin()
             self.init_game()
 
     def init_game(self) -> None:
