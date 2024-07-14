@@ -3,6 +3,7 @@ from curses import wrapper
 import random
 import string
 import time
+import sys
 
 class WordGuesser:
     def __init__(self):
@@ -56,9 +57,16 @@ class WordGuesser:
         stdscr.addstr(5, 30, "                                                         ")
         stdscr.refresh()
 
-    def generate_list_of_words(self) -> list:
-        with open('/gamehub/data/words.txt', 'r') as file:
-            words = file.read().splitlines()
+    def generate_list_of_words(self, stdscr) -> list:
+        try:
+            with open('/gamehub/data/words.txt', 'r') as file:
+                words = file.read().splitlines()
+        except FileNotFoundError:
+            stdscr.addstr(0, 0, "Unable to locate words dictionary.", curses.A_BOLD)
+            stdscr.refresh()
+            time.sleep(2)
+            sys.exit(1)
+            
         return words
 
     def generate_updated_guess(self,
@@ -94,7 +102,7 @@ class WordGuesser:
     
     def initialize_game(self, stdscr : object) -> tuple:
         curses.curs_set(0)
-        meaningful_words = self.generate_list_of_words()
+        meaningful_words = self.generate_list_of_words(stdscr)
         word_to_guess = random.choice(meaningful_words)
         guessed_word = ["_" for _ in range(5)] # The letters that the player has guessed
         guesses = 6
