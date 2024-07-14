@@ -2,7 +2,7 @@ import argparse
 from gamehub.snake import Snake
 from gamehub.game_of_life import GameOfLife
 from gamehub.chess.chess import Chess
-from gamehub.wordle import Wordle
+from gamehub.word_guesser import WordGuesser
 from gamehub.gamehub import GameHub
 
 class TestIntegrationGameHub:
@@ -47,14 +47,14 @@ class TestIntegrationGameHub:
         game = g.run()
         assert game.mode == "Multiplayer"
 
-    def test_integration_arguments_wordle(self, monkeypatch) -> None:
+    def test_integration_arguments_word_guesser(self, monkeypatch) -> None:
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
-                game="wordle")
+                game="word_guesser")
         
         monkeypatch.setattr(GameHub, "setup_parsers", namespace_generator)
-        monkeypatch.setattr(Wordle, "init_game", lambda n: None)
+        monkeypatch.setattr(WordGuesser, "init_game", lambda n: None)
 
         g = GameHub()
         game = g.run()
-        assert isinstance(game, Wordle)
+        assert isinstance(game, WordGuesser)

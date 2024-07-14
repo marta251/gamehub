@@ -4,7 +4,7 @@ import random
 import string
 import time
 
-class Wordle:
+class WordGuesser:
     def __init__(self):
         self.won = False
 
@@ -58,7 +58,6 @@ class Wordle:
 
     def generate_list_of_words(self) -> list:
         with open('/gamehub/data/words.txt', 'r') as file:
-        #with open('words.txt', 'r') as file:
             words = file.read().splitlines()
         return words
 

@@ -1,6 +1,6 @@
 import argparse
 from gamehub.chess.chess import Chess
-from . import snake, game_of_life, wordle
+from . import snake, game_of_life, word_guesser
 
 class GameHub:
     def __init__(self) -> None:
@@ -44,8 +44,8 @@ class GameHub:
                                          default=30,
                                          help="The initial density of the grid.")
 
-        # Subparser for Wordle
-        subparsers.add_parser("wordle", help="Play Wordle.")
+        # Subparser for Word Guesser
+        subparsers.add_parser("word_guesser", help="Play Word Guesser.")
         
         # Subparser for Chess
         chess_parser = subparsers.add_parser("chess", help="Play Chess.")
@@ -65,8 +65,8 @@ class GameHub:
             game = game_of_life.GameOfLife(self.apply_bound(self.args.speed, 50, 10000),
                                     self.args.mode,
                                     self.apply_bound(self.args.density, 0, 100))
-        elif self.args.game == "wordle":
-            game = wordle.Wordle()
+        elif self.args.game == "word_guesser":
+            game = word_guesser.WordGuesser()
         elif self.args.game == "chess":
             game = Chess(self.args.mode)
             

@@ -1,11 +1,11 @@
 import string
 import pytest # type: ignore
-from gamehub.wordle import Wordle
+from gamehub.word_guesser import WordGuesser
 
-class TestWordle:
+class TestWordGuesser:
     def test_constructor(self) -> None:
-        w = Wordle()
-        assert isinstance(w, Wordle)
+        w = WordGuesser()
+        assert isinstance(w, WordGuesser)
 
     @pytest.mark.parametrize("new_guessed, to_guess, alphabet, old_guessed, expected",
                              [("apple","think", ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'], "_____",
@@ -22,7 +22,7 @@ class TestWordle:
                                     alphabet : list,
                                     old_guessed : str,
                                     expected : tuple) -> None:
-        w = Wordle()
+        w = WordGuesser()
         assert w.generate_updated_guess(new_guessed, to_guess, alphabet, old_guessed) == expected
 
     # With the following test we are going to test the gameloop when the user just wins immediately
@@ -40,15 +40,15 @@ class TestWordle:
         def get_next_input(*args):
             return next(input_gen)
         
-        monkeypatch.setattr(Wordle, "check_terminal_size", lambda *args: True)
-        monkeypatch.setattr(Wordle, "initialize_game", mock_inizialize_game)
-        monkeypatch.setattr(Wordle, "draw_inserted_word", lambda *args: None)
-        monkeypatch.setattr(Wordle, "get_key", get_next_input)
-        monkeypatch.setattr(Wordle, "draw_after_invalid_input", lambda *args: None)
-        monkeypatch.setattr(Wordle, "draw_after_update", lambda *args: None)
-        monkeypatch.setattr(Wordle, "draw_winning_message", lambda *args: None)
-        monkeypatch.setattr(Wordle, "draw_losing_message", lambda *args: None)
+        monkeypatch.setattr(WordGuesser, "check_terminal_size", lambda *args: True)
+        monkeypatch.setattr(WordGuesser, "initialize_game", mock_inizialize_game)
+        monkeypatch.setattr(WordGuesser, "draw_inserted_word", lambda *args: None)
+        monkeypatch.setattr(WordGuesser, "get_key", get_next_input)
+        monkeypatch.setattr(WordGuesser, "draw_after_invalid_input", lambda *args: None)
+        monkeypatch.setattr(WordGuesser, "draw_after_update", lambda *args: None)
+        monkeypatch.setattr(WordGuesser, "draw_winning_message", lambda *args: None)
+        monkeypatch.setattr(WordGuesser, "draw_losing_message", lambda *args: None)
 
-        w = Wordle()
+        w = WordGuesser()
         w.gameloop(None)
         assert w.won is True
