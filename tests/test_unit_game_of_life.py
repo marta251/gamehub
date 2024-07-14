@@ -70,6 +70,17 @@ class TestGameOfLife:
         all_ones_or_zeros = all([elem == 0 or elem == 1 for row in new_matrix for elem in row])
         assert all_ones_or_zeros
 
+    @given(
+        strategies.lists(
+            strategies.lists(
+                strategies.integers(min_value=0, max_value=1), min_size=6, max_size=6),
+                min_size=6, max_size=6))
+    @settings(max_examples=5)
+    def test_count_live_neighbors_values(self, matrix : list[list[int]]) -> None:
+        g = GameOfLife()
+        all_count_between_0_and_8 = all([g.count_live_neighbors(matrix, row, col) >= 0 and g.count_live_neighbors(matrix, row, col) <= 8 for row in range(len(matrix)) for col in range(len(matrix[0]))])
+        assert all_count_between_0_and_8
+
     @pytest.mark.parametrize("matrix, row, col, expected",
                                 [([[0, 0, 0], [0, 0, 0], [0, 0, 0]], 0, 0, 0),
                                 ([[0, 0, 0], [0, 0, 0], [0, 0, 0]], 1, 1, 0),
