@@ -42,7 +42,7 @@ You can pull the pre-build image from Docker Hub:
 
 3. Run the docker container
     ```
-    docker run -it marta251/gamehub
+    docker run -it marta251/gamehub <game_name> [options]
     ```
 
 ## Maintainers
