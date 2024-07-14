@@ -120,7 +120,7 @@ class TestSnake:
     # The user always presses the right key, 3 food items are spawned on its path (same row, different columns)
     # A fourth food item is spawned on a different row (not on the snake's path).
     # The game should end when the snake collides with the right wall.
-    # If everything goes as expected, the score should be 3.
+    # If everything goes as expected, the score should be 3 (and the highscore as well).
     def test_gameloop_without_restart(self, monkeypatch) -> None:
         def food_coordinates_factory():
             coordinates = [(2, 8), (2, 12), (2, 16), (5, 6)]
@@ -141,8 +141,6 @@ class TestSnake:
         monkeypatch.setattr(Snake, "update_main_window", lambda *args: None)
         monkeypatch.setattr(Snake, "update_score_window", lambda *args: None)
         monkeypatch.setattr(Snake, "get_input_end_game", lambda *args: '\x1b')
-        #monkeypatch.setattr(Snake, "set_highscore", lambda *args: None)
-        #monkeypatch.setattr(Snake, "get_highscore", lambda *args: 0)
 
         # Mock the input method to always return KEY_RIGHT
         monkeypatch.setattr(Snake, "get_input_and_delay", lambda *args: "KEY_RIGHT")
@@ -150,4 +148,55 @@ class TestSnake:
 
         s = Snake()
         s.gameloop(None)
-        assert s.score == 3
+        assert s.score == 3 and s.highscore == 3
+
+
+    # Similar to the previous test, but after the game ends, the user presses 'a' to restart the game.
+    # Thehe user always presses the right key, 2 food items are spawned on its path (same row, different columns)
+    # A third food item is spawned on a different row (not on the snake's path).
+    # The game should end when the snake collides with the right wall.
+    # If everything goes as expected, the score should be 2 (and the highscore should be 3).
+    def test_gameloop_with_restart(self, monkeypatch) -> None:
+        def food_coordinates_factory():
+            coordinates = [ (2, 8), (2, 12), (2, 16), (5, 6), 
+                            (2, 12), (2, 16), (5, 6)]
+            for coord in coordinates:
+                yield coord
+
+        food_coords_gen = food_coordinates_factory()
+        
+        def get_next_food_coordinates(self, *args):
+            return next(food_coords_gen)
+        
+        def input_factory():
+            inputs = ['a', '\x1b']
+            for input in inputs:
+                yield input
+
+        inputs_gen = input_factory()
+        
+        def get_next_input(self, *args):
+            return next(inputs_gen)
+        
+        def setup_curses(self, *args):
+            return (None, None, None, 30, 60, None, None)
+        
+        def mock_restart_game(self, *args):
+            self.score = 0
+            return deque([(2, 4), (2, 6)]), "RIGHT", "KEY_RIGHT"
+
+        # Mock all the gameloop methods related to curses to avoid the need of a terminal
+        monkeypatch.setattr(Snake, "check_terminal_size", lambda *args: True)
+        monkeypatch.setattr(Snake, "set_up_curses", setup_curses)
+        monkeypatch.setattr(Snake, "update_main_window", lambda *args: None)
+        monkeypatch.setattr(Snake, "update_score_window", lambda *args: None)
+        monkeypatch.setattr(Snake, "get_input_end_game", get_next_input)
+        monkeypatch.setattr(Snake, "restart_game", mock_restart_game)
+
+        # Mock the input method to always return KEY_RIGHT
+        monkeypatch.setattr(Snake, "get_input_and_delay", lambda *args: "KEY_RIGHT")
+        monkeypatch.setattr(Snake, "new_food_coordinates", get_next_food_coordinates)
+
+        s = Snake()
+        s.gameloop(None)
+        assert s.score == 2 and s.highscore == 3
