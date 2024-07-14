@@ -15,7 +15,8 @@ class Snake:
         else:
             self.delta_time = 0.025
         self.score = 0
-        self.highscore = self.get_highscore()
+        self.highscore = 0
+        
 
     def calcule_new_position(self,
                              y : int,
@@ -63,7 +64,7 @@ class Snake:
     def draw_game_over(self, window, ROWS : int, COLS : int) -> None:
         window.addstr(ROWS//2 - 3, COLS//2 - 10, "GAME OVER", curses.A_BOLD)
         window.addstr(ROWS//2 - 2, COLS//2 - 10, "SCORE: " + str(self.score), curses.A_BOLD)
-        window.addstr(ROWS//2 - 1, COLS//2 - 10, "HIGHSCORE: " + str(self.get_highscore()), curses.A_BOLD)
+        window.addstr(ROWS//2 - 1, COLS//2 - 10, "HIGHSCORE: " + str(self.highscore), curses.A_BOLD)
         window.addstr(ROWS//2, COLS//2 - 10, "Press any key to play again...", curses.A_BLINK)
         window.refresh()
         time.sleep(1)
@@ -90,22 +91,6 @@ class Snake:
             if body[len(body) - 1] == body[i]:
                 return True
         return False
-    
-    def get_highscore(self) -> int:
-        try:
-            with open("/tmp/snake_highscore.txt", "r") as file:
-                return int(file.read())
-        except:
-            return 0
-        
-    def set_highscore(self) -> None:
-        if self.score > self.highscore:
-            try :
-                with open("/tmp/snake_highscore.txt", "w") as file:
-                    file.write(str(self.score))
-                self.highscore = self.score
-            except:
-                pass
     
     def check_terminal_size(self, min_lines : int, min_cols : int, window : object) -> bool:
         if curses.COLS < min_cols or curses.LINES < min_lines:
@@ -193,10 +178,10 @@ class Snake:
             (y, x) = self.calcule_new_position(body[len(body) - 1][0], body[len(body) - 1][1], direction, SNAKE_BOUNDS)
             body.append((y, x))
             if self.verify_collision(body):
-                self.set_highscore()
                 self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, True)
                 if last_key != '\x1b' and self.get_input_end_game(stdscr) != '\x1b':
                     body, direction, last_key = self.restart_game(stdscr)
+                    self.update_score_window(score_window)
                     y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
                 else:
                     break
@@ -204,6 +189,8 @@ class Snake:
                 body.append((y, x))
                 y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
                 self.score += 1
+                if self.score > self.highscore:
+                    self.highscore = self.score
                 self.update_score_window(score_window)
             else:
                 body.popleft()
