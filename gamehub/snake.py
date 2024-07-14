@@ -197,6 +197,7 @@ class Snake:
                 self.update_main_window(main_window, COLOR_WHITE_WHITE, COLOR_GREEN_GREEN, COLOR_RED_RED, LINES_MAIN_WINDOW, COLS_MAIN_WINDOW, body, x_food, y_food, True)
                 if last_key != '\x1b' and self.get_input_end_game(stdscr) != '\x1b':
                     body, direction, last_key = self.restart_game(stdscr)
+                    y_food, x_food = self.new_food_coordinates(body, SNAKE_BOUNDS)
                 else:
                     break
             if self.check_food_eaten(body, y_food, x_food):
