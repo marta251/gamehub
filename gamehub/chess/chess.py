@@ -50,7 +50,7 @@ class Chess:
         return check, checkmate, stalemate
 
     def init_curses(self) -> tuple[int, int, int]:
-        curses.curs_set(0)  # Hide cursor
+        curses.curs_set(0)
         curses.mousemask(1) # Enable mouse events
 
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
