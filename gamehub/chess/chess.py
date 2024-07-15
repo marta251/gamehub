@@ -9,7 +9,7 @@ from gamehub.chess.chess_piece import ChessPiece
 class Chess: 
     def __init__(self, mode : str = "Multiplayer", fen : str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"): # Castling disabled by default (when implemented, change to "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         self.mode = mode
-        self.board = ChessBoard(fen = "k7/ppp5/8/8/8/8/8/K7 w - - 0 1") 
+        self.board = ChessBoard(fen = fen) 
         self.players = ["w", "b"]
         if self.board.playerToMove == "w":
             self.current_player = self.players[0]
