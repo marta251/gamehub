@@ -2,7 +2,7 @@ import subprocess
 
 class ChessEngine:
     def __init__(self):
-        self.process = subprocess.Popen(['/usr/local/bin/stockfish'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.process = subprocess.Popen(['stockfish'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self.initialize_engine()
     
     def initialize_engine(self) -> None:

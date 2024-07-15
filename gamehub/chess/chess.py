@@ -4,11 +4,12 @@ from curses import wrapper
 from curses.textpad import rectangle
 import time
 from gamehub.chess.chess_engine import ChessEngine
+from gamehub.chess.chess_piece import ChessPiece
 
 class Chess: 
     def __init__(self, mode : str = "Multiplayer", fen : str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"): # Castling disabled by default (when implemented, change to "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         self.mode = mode
-        self.board = ChessBoard(fen) 
+        self.board = ChessBoard(fen = "k7/ppp5/8/8/8/8/8/K7 w - - 0 1") 
         self.players = ["w", "b"]
         if self.board.playerToMove == "w":
             self.current_player = self.players[0]
@@ -48,6 +49,13 @@ class Chess:
                 stalemate = True
 
         return check, checkmate, stalemate
+    
+    def detect_promotion_and_promote(self) -> None:
+        for i in range(8):
+            if self.board.matrix[0][i] != None and self.board.matrix[0][i].color == "w" and self.board.matrix[0][i].piece_char == "P":
+                self.board.matrix[0][i] = ChessPiece("Q", (i, 0))
+            if self.board.matrix[7][i] != None and self.board.matrix[7][i].color == "b" and self.board.matrix[7][i].piece_char == "p":
+                self.board.matrix[7][i] = ChessPiece("q", (i, 7))
 
     def init_curses(self) -> tuple[int, int, int]:
         curses.curs_set(0)
@@ -179,6 +187,7 @@ class Chess:
                 x_end, y_end = self.from_input_to_board(x2, y2)
                 if (x_end, y_end) in possible:
                     self.move_piece((x_start, y_start), (x_end, y_end))
+                    self.detect_promotion_and_promote()
                     self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
                     if not self.check:
                         self.update_screen(stdscr, COLOR_WHITE_BLACK)
@@ -228,6 +237,7 @@ class Chess:
                     x_end, y_end = self.from_input_to_board(x2, y2)
                 if (x_end, y_end) in possible:
                     self.move_piece((x_start, y_start), (x_end, y_end))
+                    self.detect_promotion_and_promote()
                     self.check, self.checkmate, self.stalemate = self.detect_check_checkmate_stalemate()
 
                     if not self.check:
