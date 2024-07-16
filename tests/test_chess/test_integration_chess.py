@@ -95,6 +95,17 @@ class TestChess:
         c.move_piece(start, end)
         assert c.board.convert_board_to_fen() == expected
 
+
+    @pytest.mark.parametrize("fen, expected",
+                             [("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2", "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2"),
+                              ("P7/1PK5/5k2/5pp1/8/8/8/8 w - - 0 67", "Q7/1PK5/5k2/5pp1/8/8/8/8 w - - 0 67"),
+                              ("1k3rr1/npp5/p7/8/8/5p2/PPP3p1/1KQ4p w - - 0 34", "1k3rr1/npp5/p7/8/8/5p2/PPP3p1/1KQ4q w - - 0 34")
+                              ])
+    def test_detect_promotion_and_promote(self, fen : str, expected : str) -> None:
+        c = Chess(fen=fen)
+        c.detect_promotion_and_promote()
+        assert c.board.convert_board_to_fen() == expected
+
     @pytest.mark.parametrize("fen, expected", [
         ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", (False, False, False)),    # Starting position
         ("8/5p2/p4K2/3pp3/8/1P3q2/1kr2R2/8 w - - 0 43", (True, False, False)),                  # Check
