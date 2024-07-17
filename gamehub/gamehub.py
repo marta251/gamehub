@@ -1,12 +1,33 @@
+"""
+This module contains the GameHub class, which is the main class of the application.
+It is responsible for parsing the command line arguments and launching the selected game.
+"""
 import argparse
 from gamehub.chess.chess import Chess
 from . import snake, game_of_life, word_guesser
 
 class GameHub:
+    """
+    The main class of the application. It is responsible for parsing
+    the command line arguments and launching the selected game.
+
+    Attribute initialized:
+        args: argparse.Namespace object containing the parsed command line arguments.
+    """
     def __init__(self) -> None:
         self.args = self.setup_parsers()
 
-    def apply_bound(self, value : int, lower_bound : int, upper_bound : int):
+    def apply_bound(self, value : int, lower_bound : int, upper_bound : int) -> int:
+        """
+        Apply a lower and an upper bound to a given value.
+
+        Parameters:
+            value: The value to be bounded.
+            lower_bound: The lower bound.
+            upper_bound: The upper bound.
+        Returns:
+            The bounded value.
+        """
         if value < lower_bound:
             return lower_bound
         elif value > upper_bound:
@@ -15,6 +36,12 @@ class GameHub:
             return value
         
     def setup_parsers(self) -> argparse.Namespace:
+        """
+        Setup the command line argument parsers.
+
+        Returns:
+            argparse.Namespace object containing the parsed command line arguments.
+        """
         parser = argparse.ArgumentParser(
             prog="gamehub",
             description="GameHub is a game launcher for the terminal.\n")
@@ -57,7 +84,10 @@ class GameHub:
 
         return parser.parse_args()
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Run the selected game.
+        """
         game = None
         if self.args.game == "snake":
             game = snake.Snake(self.args.difficulty)
