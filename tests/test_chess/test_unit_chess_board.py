@@ -1,13 +1,22 @@
-import pytest  # type: ignore
+"""
+Module that contains the TestChessBoard class,
+which is used to test the ChessBoard class.
+"""
+import pytest
 from gamehub.chess.chess_board import ChessBoard
 from gamehub.chess.chess_piece import ChessPiece
 
 class TestChessBoard:
+    """
+    Class to test the ChessBoard class.
+    """
     @pytest.mark.parametrize("fen, expected",
                                 [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
                                 ('w', 'KQkq', '-', 0, 1))])
     def test_constructor_chess_board_from_fen(self, fen : str, expected : tuple[list[list[ChessPiece]], str, str, str, int, int]) -> None:
-            
+        """
+        Verify that the constructor of the ChessBoard class works as expected when given a FEN string.
+        """
         board = ChessBoard(fen)
         assert (board.playerToMove == expected[1] and
                 board.castlingRights == expected[2] and
@@ -36,6 +45,9 @@ class TestChessBoard:
                                 [ChessPiece('R', (0, 7)), ChessPiece('N', (1, 7)), ChessPiece('B', (2, 7)), ChessPiece('Q', (3, 7)), ChessPiece('K', (4, 7)), ChessPiece('B', (5, 7)), ChessPiece('N', (6, 7)), ChessPiece('R', (7, 7))]], 
                                 'w', 'KQkq', '-', 0, 1))])
     def test_constructor_chess_board_from_fen(self, board : tuple[list[list[ChessPiece]], str, str, str, int, int] , expected : tuple[list[list[ChessPiece]], str, str, str, int, int]) -> None:
+        """
+        Verify that the constructor of the ChessBoard class works as expected when given a board representation.
+        """
         board = ChessBoard(matrix=board[0], playerToMove=board[1], castlingRights=board[2], enPassant=board[3], halfMoveCounter=board[4], fullMoveCounter=board[5])
         assert (board.matrix == expected[0] and
                 board.playerToMove == expected[1] and
@@ -53,6 +65,9 @@ class TestChessBoard:
                               ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR n KQkq 0 1"),
                               ])
     def test_constructor_raises_exception_invalid_fen(self, fen : str) -> None:
+        """
+        Verify that the constructor of the ChessBoard class raises a ValueError when given an invalid FEN string.
+        """
         with pytest.raises(ValueError):
             ChessBoard(fen)
 
@@ -63,5 +78,8 @@ class TestChessBoard:
                             ((None, None, "w", "KQkq", None, 1, 5)),
                               ])
     def test_constructor_raises_exception_invalid_arguments(self, arguments : tuple) -> None:
+        """
+        Verify that the constructor of the ChessBoard class raises a ValueError when given invalid arguments.
+        """
         with pytest.raises(ValueError):
             ChessBoard(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6])

@@ -1,13 +1,23 @@
+"""
+Module to test the TestChess class,
+which is used to test the Chess class.
+"""
 from gamehub.chess.chess import Chess
 from gamehub.chess.chess_engine import ChessEngine
 import pytest # type: ignore
 
 class TestChess:
-    # To test the chess gameloops we simulate a very short game with hardcoded inputs
-    # The game is a checkmate in 4 moves (f2f3, e7e5, g2g4, d8h4)
-    # We simulate the inputs for the game with a generator that returns the inputs (terminal coordinates)
-    # We expect the variable checkmate to be True at the end of the gameloop
+    """
+    Class to test the Chess class, integrated with all the other chess classes.
+    """
     def test_multiplayer_gameloop(self, monkeypatch):
+        """
+        Test the gameloop for a multiplayer game (between two real players).
+        To test the chess gameloops we simulate a very short game with hardcoded inputs
+        The game is a checkmate in 4 moves (f2f3, e7e5, g2g4, d8h4)
+        We simulate the inputs for the game with a generator that returns the inputs (terminal coordinates)
+        We expect the variable checkmate to be True at the end of the gameloop.
+        """
         # Mock the user input
         def input_factory():
             inputs = [(25, 18, False), (25, 15, False), # f2f3
@@ -36,8 +46,15 @@ class TestChess:
         c.multiplayer_gameloop(None)
         assert c.checkmate == True
 
-    # Same as above but for the single player gameloop
     def test_singleplayer_gameloop(self, monkeypatch):
+        """
+        Test the gameloop for a single player game (against the chess engine).
+        To test the chess gameloops we simulate a very short game with hardcoded inputs
+        The game is a checkmate in 4 moves (f2f3, e7e5, g2g4, d8h4)
+        We simulate the inputs for the game with a generator that returns the inputs (terminal coordinates)
+        We mock the chess engine to return the moves we want
+        We expect the variable checkmate to be True at the end of the gameloop.
+        """
         # We need to mock the chess engine to return the moves we want 
         def chess_engine_best_move_factory():
             best_moves = [(4, 1 , 4, 3), # e7e5
@@ -84,6 +101,9 @@ class TestChess:
                              [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", ("w", 1)),
                               ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", ("b", 32))])   
     def test_constructor(self, fen : str, expected : tuple[str, int]) -> None:
+        """
+        Verify that the constructor of the Chess class works as expected.
+        """
         c = Chess(fen=fen)
         assert c.current_player == expected[0] and c.turn == expected[1]
 
@@ -91,6 +111,10 @@ class TestChess:
                              [("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", (4, 6), (4, 4), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2"), # e4
                               ("8/5b2/8/P5kp/1P3pp1/3R4/2K5/8 b - - 0 32", (7, 3), (7, 4), "8/5b2/8/P5k1/1P3ppp/3R4/2K5/8 w - - 0 33")])
     def test_move_piece(self, starting_fen : str, start : tuple[int, int], end : tuple[int, int], expected : str) -> None:
+        """
+        Test the move_piece method, from a starting fen move a piece
+        and check if the fen after the move is the expected one.
+        """
         c = Chess(fen=starting_fen)
         c.move_piece(start, end)
         assert c.board.convert_board_to_fen() == expected
@@ -102,6 +126,10 @@ class TestChess:
                               ("1k3rr1/npp5/p7/8/8/5p2/PPP3p1/1KQ4p w - - 0 34", "1k3rr1/npp5/p7/8/8/5p2/PPP3p1/1KQ4q w - - 0 34")
                               ])
     def test_detect_promotion_and_promote(self, fen : str, expected : str) -> None:
+        """
+        Test the detect_promotion_and_promote method, from a starting fen detect where a pawn is in the last rank
+        verify if the promotion is detected and the pawn is promoted to a queen (by checking the fen after the promotion).
+        """
         c = Chess(fen=fen)
         c.detect_promotion_and_promote()
         assert c.board.convert_board_to_fen() == expected
@@ -113,6 +141,9 @@ class TestChess:
         ("8/8/4K3/8/8/8/2R5/k2R4 b - - 0 62", (True, True, False))                              # Checkmate
     ])
     def test_detect_check_checkmate_stalemate(self, fen : str, expected : tuple[bool, bool, bool]) -> None:
+        """
+        Test if the detect_check_checkmate_stalemate method actually detects check, checkmate and stalemate correctly.
+        """
         c = Chess(fen=fen)
         check, checkmate, stalemate = c.detect_check_checkmate_stalemate()
         assert check == expected[0] and checkmate == expected[1] and stalemate == expected[2]

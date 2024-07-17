@@ -1,11 +1,19 @@
-import pytest  # type: ignore
-from gamehub.chess.chess_piece import ChessPiece
+"""
+Module that contains the TestChessPiece class,
+which is used to test the ChessPiece class.
+"""
 from collections import Counter
+import pytest
+from gamehub.chess.chess_piece import ChessPiece
 
 class TestChessPiece:
-    #I define the matrix without using the ChessBoard class since I'm unit testing the ChessPiece class
+    """
+    Class to test the ChessPiece class
+    """
+    # I define the matrix without using the ChessBoard class
+    # since I'm unit testing the ChessPiece class
     def chess_piece_matrix_factory(self) -> list[list[ChessPiece]]:
-        # Magnus Carlsen vs Hikaru Nakamura 
+        # Magnus Carlsen vs Hikaru Nakamura
         # 12th Norway Chess (2024) (armageddon), Stavanger NOR, rd 2, May-28 Move 20 (Bxd3)
         matrix = [[None for _ in range(8)] for _ in range(8)]
         matrix[0][2]= ChessPiece("q", (2 ,0))
@@ -13,9 +21,9 @@ class TestChessPiece:
         matrix[0][4]= ChessPiece("r", (4 ,0))
         matrix[0][6]= ChessPiece("k", (6 ,0))
         matrix[1][1]= ChessPiece("b", (1 ,1))
-        matrix[1][5]= ChessPiece("p", (5 ,1))  
-        matrix[1][6]= ChessPiece("p", (6 ,1))    
-        matrix[1][7]= ChessPiece("p", (7 ,1))    
+        matrix[1][5]= ChessPiece("p", (5 ,1))
+        matrix[1][6]= ChessPiece("p", (6 ,1))
+        matrix[1][7]= ChessPiece("p", (7 ,1))
         matrix[2][0]= ChessPiece("p", (0 ,2))
         matrix[2][3]= ChessPiece("p", (3 ,2))
         matrix[2][6]= ChessPiece("n", (6 ,2))
@@ -35,9 +43,9 @@ class TestChessPiece:
         matrix[7][4]= ChessPiece("R", (4 ,7))
         matrix[7][5]= ChessPiece("N", (5 ,7))
         matrix[7][6]= ChessPiece("K", (6 ,7))
-        
+
         return matrix
-    
+
     # For each piece I test the legal moves
     @pytest.mark.parametrize("position, expected",
                                 [((2, 0), [(0, 0), (1, 0), (2, 1), (2, 2), (2, 3), (3, 1), (4, 2), (5, 3), (6, 4), (7, 5)]),
@@ -67,8 +75,11 @@ class TestChessPiece:
                                  ((4, 7), [(4, 6), (4, 5)]),
                                  ((5, 7), [(3, 6), (4, 5)]),
                                  ((6, 7), [(7, 7)])
-                                 ])                                                      
+                                 ])
     def test_legal_moves(self, position : tuple[int,int], expected : tuple) -> None:
+        """
+        Given a matrix and a position, check the legal moves of the piece in that position
+        """
         matrix = self.chess_piece_matrix_factory()
         piece = matrix[position[1]][position[0]]
         assert Counter(piece.legal_moves(matrix)) == Counter(expected)
@@ -79,6 +90,9 @@ class TestChessPiece:
                                 ("R", (4, 7), ("R", (4, 7), "Rook", "w", "♜")),
                                 ("N", (5, 7), ("N", (5, 7), "Knight", "w", "♞"))])
     def test_chess_piece_constructor(self, char : str, position : tuple[int, int], expected : tuple[str,tuple[int,int],str,str,str]) -> None:
+        """
+        Test that the constructor of the ChessPiece class works as expected
+        """
         piece = ChessPiece(char, position)
         assert (piece.piece_char == expected[0] and
                 piece.position == expected[1] and
@@ -94,5 +108,8 @@ class TestChessPiece:
                                   ("n", (0, -1)),
                                   ("p", (121, 0))])
     def test_chess_piece_constructor_invalid_piece(self, char : str, position : tuple[int,int]) -> None:
+        """
+        Test that the constructor of the ChessPiece class raises a ValueError when the arguments are invalid
+        """
         with pytest.raises(ValueError):
             ChessPiece(char, position)
