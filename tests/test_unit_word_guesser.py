@@ -1,9 +1,19 @@
+"""
+This module contains the TestWordGuesser class which is
+responsible for testing the Word Guesser game.
+"""
 import string
 import pytest # type: ignore
 from gamehub.word_guesser import WordGuesser
 
 class TestWordGuesser:
+    """
+    This class contains the methods used to test the Word Guesser game.
+    """
     def test_constructor(self) -> None:
+        """
+        Test the constructor of the WordGuesser class.
+        """
         w = WordGuesser()
         assert isinstance(w, WordGuesser)
 
@@ -22,13 +32,19 @@ class TestWordGuesser:
                                     alphabet : list,
                                     old_guessed : str,
                                     expected : tuple) -> None:
+        """
+        Test the generate_updated_guess method of the WordGuesser class.
+        """
         w = WordGuesser()
         assert w.generate_updated_guess(new_guessed, to_guess, alphabet, old_guessed) == expected
 
-    # With the following method we are going to test the gameloop
-    # The user inserts the following words: apple (not the target word but a valid one),
-    # aboud (an invalid word) and think (the target word)
     def test_gameloop_win(self, monkeypatch) -> None:
+        """
+        Test the gameloop method of the WordGuesser class when
+        the user wins in the following way:
+        the user inserts apple (not the target word but a valid one),
+        aboud (an invalid word) and think (the target word).
+        """
         def mock_inizialize_game(*args):
             return ["think", "apple", "about"], "think", ["_", "_", "_", "_", "_"], 6, list(string.ascii_lowercase), False
         
@@ -57,8 +73,10 @@ class TestWordGuesser:
         w.gameloop(None)
         assert w.won is True
 
-    # With the following method we are going to test the gameloop when the user looses
     def test_gameloop_loose(self, monkeypatch) -> None:
+        """
+        Test the gameloop method of the WordGuesser class when the user looses.
+        """
         def mock_inizialize_game(*args):
             return ["think", "apple", "about", "shark", "beach", "chair"], "table", ["_", "_", "_", "_", "_"], 6, list(string.ascii_lowercase), False
         
