@@ -1,3 +1,7 @@
+"""
+This module contains the class TestIntegrationGameHub that
+contains the integration tests for the GameHub class.
+"""
 import argparse
 import pytest # type: ignore
 from gamehub.snake import Snake
@@ -7,7 +11,13 @@ from gamehub.word_guesser import WordGuesser
 from gamehub.gamehub import GameHub
 
 class TestIntegrationGameHub:
+    """
+    This class contains the integration tests for the GameHub class.
+    """
     def test_integration_arguments_snake(self, monkeypatch) -> None:
+        """
+        Test the interaction between GameHub and Snake when the user specifies 'snake'.
+        """
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
                 game="snake",
@@ -21,6 +31,9 @@ class TestIntegrationGameHub:
         assert game.difficulty == "Easy"
     
     def test_integration_arguments_gol(self, monkeypatch):
+        """
+        Test the interaction between GameHub and GameOfLife when the user specifies 'game_of_life'.
+        """
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
                 game="game_of_life",
@@ -36,6 +49,9 @@ class TestIntegrationGameHub:
         assert game.speed == 100 and game.mode == "Automatic" and game.density == 30
 
     def test_integration_arguments_chess(self, monkeypatch) -> None:
+        """
+        Test the interaction between GameHub and Chess when the user specifies 'chess'.
+        """
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
                 game="chess",
@@ -49,6 +65,9 @@ class TestIntegrationGameHub:
         assert game.mode == "Multiplayer"
 
     def test_integration_arguments_word_guesser(self, monkeypatch) -> None:
+        """
+        Test the interaction between GameHub and WordGuesser when the user specifies 'word_guesser'.
+        """
         def namespace_generator(self) -> argparse.Namespace:
             return argparse.Namespace(
                 game="word_guesser")
