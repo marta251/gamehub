@@ -1,6 +1,17 @@
 from gamehub.chess.chess_piece import ChessPiece
 
 class ChessBoard:
+    """
+    Object representing a chess board with its pieces and attributes.
+
+    Attributes:
+    - matrix: The 2D matrix representing the board, each cell contains a ChessPiece object
+    - playerToMove: The color of the player to move ("w" for white, "b" for black)
+    - castlingRights: The castling rights of the players ("KQkq" for all rights, "-" for none)
+    - enPassant: The en passant square (e.g. "e3" or "-") [not implemented yet]
+    - halfMoveCounter: The number of half moves since the last capture or pawn move [not implemented yet]
+    - fullMoveCounter: The number of full moves since the start of the game
+    """
     # Generates a chess board from a FEN string or from a matrix and other parameters
     def __init__(self, fen=None, matrix=None, playerToMove=None, castlingRights=None, enPassant=None, halfMoveCounter=None, fullMoveCounter=None) -> None:
         if fen is not None:
@@ -22,7 +33,7 @@ class ChessBoard:
             self.fullMoveCounter = fullMoveCounter
         else:
             raise ValueError("Invalid arguments")
-        
+
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, ChessBoard):
             return False
@@ -32,8 +43,17 @@ class ChessBoard:
                 self.enPassant == value.enPassant and
                 self.halfMoveCounter == value.halfMoveCounter and
                 self.fullMoveCounter == value.fullMoveCounter)
-        
+
     def check_fen_validity(self, fen: str) -> bool:
+        """
+        Function that checks the validity of a FEN string.
+
+        Parameters:
+        - fen: The FEN string to check
+
+        Return:
+        - True if the FEN string is valid, False otherwise
+        """
         fen_split = fen.split(" ")
         if len(fen_split) != 6:
             return False
@@ -51,6 +71,15 @@ class ChessBoard:
 
     # Converts a FEN string to a 2D matrix
     def convert_fen_to_matrix(self, fen: str) -> list[list[ChessPiece]]:
+        """
+        Function that converts a FEN string (the matrix part) to a 2D matrix of ChessPiece objects.
+
+        Parameters:
+        - fen: The FEN string to convert (only the matrix part)
+
+        Return:
+        - list[list[ChessPiece]] -> The 2D matrix of ChessPiece objects
+        """
         matrix = []
         fen = fen.split(" ")[0]
         rows = fen.split("/")
@@ -75,14 +104,23 @@ class ChessBoard:
             element_index = 0
 
         return matrix
-    
+
     # Converts a 2D matrix to a FEN string
     def convert_matrix_to_fen(self, matrix: list[list[ChessPiece]]) -> str:
+        """
+        Function that converts a 2D matrix of ChessPiece objects to a FEN string (the matrix part).
+
+        Parameters:
+        - matrix: The 2D matrix of ChessPiece objects
+
+        Return:
+        - str -> The FEN string (only the matrix part)
+        """
         fen = ""
         for row in matrix:
             empty = 0
             for elem in row:
-                if elem == None:
+                if elem is None:
                     empty += 1
                 else:
                     if empty > 0:
@@ -93,14 +131,29 @@ class ChessBoard:
                 fen += str(empty)
             fen += "/"
         return fen[:-1]
-    
+
     # Converts the board to a FEN string
     def convert_board_to_fen(self) -> str:
+        """
+        Function that converts the board to a FEN string (all parts).
+
+        Return:
+        - str -> The FEN string
+        """
         return self.convert_matrix_to_fen(self.matrix) + " " + self.playerToMove + " " + self.castlingRights + " " + self.enPassant + " " + str(self.halfMoveCounter) + " " + str(self.fullMoveCounter)
-    
+
     def detect_king_coordinates (self, color):
+        """
+        Function that detects the coordinates of the king of the given color.
+
+        Parameters:
+        - color: The color of the king to detect
+
+        Return:
+        - tuple -> The coordinates of the king
+        """
         for i in range(8):
             for j in range(8):
-                if self.matrix[i][j] != None and (self.matrix[i][j].get_piece_char() == "K" or self.matrix[i][j].get_piece_char() == "k") and self.matrix[i][j].color == color:
+                if self.matrix[i][j] is not None and (self.matrix[i][j].get_piece_char() == "K" or self.matrix[i][j].get_piece_char() == "k") and self.matrix[i][j].color == color:
                     return (j, i)
         return None
