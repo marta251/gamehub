@@ -1,3 +1,7 @@
+"""
+This module contains the TestSnake class which is
+responsible for testing the Snake game.
+"""
 from collections import deque
 import pytest # type: ignore
 from gamehub.snake import Snake
@@ -5,7 +9,13 @@ from hypothesis import given, strategies, settings # type: ignore
 from hypothesis.strategies import composite, integers # type: ignore
 
 class TestSnake:
+    """
+    This class contains the methods used to test the Snake game.
+    """
     def test_constructor_isinstance(self) -> None:
+        """
+        Test if the constructor of the Snake class returns an instance of the Snake class.
+        """
         s = Snake()
         assert isinstance(s, Snake)
 
@@ -14,10 +24,16 @@ class TestSnake:
                                 ("Medium", 0.05),
                                 ("Hard", 0.025)])
     def test_constructor(self, difficulty : str, expected : float) -> None:
+        """
+        Test the constructor of the Snake class.
+        """
         s = Snake(difficulty)
         assert s.delta_time == expected
 
     def test_constructor_default(self) -> None:
+        """
+        Test the default behavior of the constructor of the Snake class.
+        """
         s = Snake()
         assert s.delta_time == 0.05
 
@@ -28,6 +44,9 @@ class TestSnake:
                                 ("KEY_DOWN", "DOWN", "DOWN"),
                                 ("KEY_RIGHT", "LEFT", "LEFT")])
     def test_calcule_direction(self, key : str, current_direction : str, expected : str) -> None:
+        """
+        Test the calculation of the new direction of the snake.
+        """
         snake_t = Snake()
         assert snake_t.calcule_direction(current_direction, key) == expected
 
@@ -43,16 +62,25 @@ class TestSnake:
                                     direction : str,
                                     SNAKE_BOUNDS : tuple[int, int, int, int],
                                     expected : tuple[int, int]) -> None:
+        """
+        Test the calculation of the new position of the snake.
+        """
         s = Snake()
         assert s.calcule_new_position(y, x, direction, SNAKE_BOUNDS) == expected
 
     @composite
     def smaller_than_y(draw) -> tuple[int, int]:
+        """
+        Generate two integers where the second one is greater than the first one.
+        """
         a = draw(integers(min_value=1))
         b = draw(integers(min_value=a))
         return a, b
     @composite
     def smaller_than_x(draw) -> tuple[int, int]:
+        """
+        Generate two big integers where the second one is greater than the first one.
+        """
         a = draw(integers(min_value=1)) * 2
         b = draw(integers(min_value=a)) * 2
         return a, b
@@ -65,6 +93,9 @@ class TestSnake:
             strategies.just("RIGHT")))
     @settings(max_examples=20)
     def test_property_calcule_new_position_always_inside(self, t : tuple) -> None:
+        """
+        Test that the new position found for the snake is always inside the bounds.
+        """
         s = Snake()
         SNAKE_BOUNDS = (1, t[0][1], 2, t[1][1])
         res_y, res_x = s.calcule_new_position(t[0][0],t[1][0],t[2],SNAKE_BOUNDS)
@@ -79,6 +110,9 @@ class TestSnake:
     def test_new_food_coordinates(self,
                                   body : deque[tuple[int, int]],
                                   SNAKE_BOUNDS : tuple[int, int, int, int]) -> None:
+        """
+        Test the generation of new food coordinates.
+        """
         s = Snake()
         (y, x) = s.new_food_coordinates(body, SNAKE_BOUNDS)
         assert (y, x) not in body
@@ -89,6 +123,9 @@ class TestSnake:
         ))
     @settings(max_examples=10)
     def test_property_new_food_coordinates_always_inside(self, t : tuple[int, int]) -> None:
+        """
+        Test that the food coordinates generated are always inside the bounds.
+        """
         s = Snake()
         SNAKE_BOUNDS = (1, t[0], 2, t[1])
         (y, x) = s.new_food_coordinates([], SNAKE_BOUNDS)
@@ -104,6 +141,9 @@ class TestSnake:
                               y_food : int,
                               x_food : int,
                               expected : bool) -> None:
+        """
+        Test the verification of food eaten by the snake.
+        """
         s = Snake()
         assert s.check_food_eaten(body, y_food, x_food) == expected
     
@@ -113,15 +153,20 @@ class TestSnake:
                                 ([(9, 6), (10, 6), (11, 6)], False),
                                 ([(9, 6), (10, 6), (10, 4), (9,4), (9,6)], True) ])
     def test_verify_collision(self, body : deque[tuple[int, int]], expected : bool) -> None:
+        """
+        Test the verification of collision of the snake with itself
+        """
         s = Snake()
         assert s.verify_collision(body) == expected
 
-    # To test the gameloop we consider the folloging scenario:
-    # The user always presses the right key, 3 food items are spawned on its path (same row, different columns)
-    # A fourth food item is spawned on a different row (not on the snake's path).
-    # The game should end when the snake collides with the right wall.
-    # If everything goes as expected, the score should be 3 (and the highscore as well).
     def test_gameloop_without_restart(self, monkeypatch) -> None:
+        """
+        Test the gameloop method of the Snake class in the following scenario:
+
+        the player always presses the right key, 3 food items are spawned on its path (same row but different columns) and
+        a fourth one is spawned on a different row. The game should end when the snake collides with the right wall.
+        The score (and the highscore as well) should be 3.
+        """
         def food_coordinates_factory():
             coordinates = [(2, 8), (2, 12), (2, 16), (5, 6)]
             for coord in coordinates:
@@ -150,13 +195,15 @@ class TestSnake:
         s.gameloop(None)
         assert s.score == 3 and s.highscore == 3
 
-
-    # Similar to the previous test, but after the game ends, the user presses 'a' to restart the game.
-    # Thehe user always presses the right key, 2 food items are spawned on its path (same row, different columns)
-    # A third food item is spawned on a different row (not on the snake's path).
-    # The game should end when the snake collides with the right wall.
-    # If everything goes as expected, the score should be 2 (and the highscore should be 3).
     def test_gameloop_with_restart(self, monkeypatch) -> None:
+        """
+        Test the gameloop method of the Snake class in the following scenario:
+
+        the player presses 'a' to restart the game after losing.
+        Then the player always presses the right key, 2 food items are spawned on its path (same row but different columns) and
+        a third food item is spawned on a different row. The game should end when the snake collides with the right wall.
+        The score should be 2 while the best score should be 3.
+        """
         def food_coordinates_factory():
             coordinates = [ (2, 8), (2, 12), (2, 16), (5, 6), 
                             (2, 12), (2, 16), (5, 6)]

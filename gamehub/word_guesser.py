@@ -12,13 +12,10 @@ class WordGuesser:
     """
     This class contains the methods used to run the Word Guesser game.
     
-    Attributes:
-        won: A boolean flag to check if the player has won the game or not.
+    Attribute initialized:
+        won: A boolean flag to check if the player has won the game or not initialized as False.
     """
     def __init__(self):
-        """
-        Initialize the game by setting the won flag to False.
-        """
         self.won = False
 
     def draw_initial_board(self,
